@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="Generated files" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/js/utype.js" />
+        <item url="file://$PROJECT_DIR$/js/interval_switcher.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/js/tm_xml_parser.js" />
+      <root url="file://$PROJECT_DIR$/js/tm_xml_parser.js" />
+      <root url="file://$PROJECT_DIR$/js/timer.js" />
+      <root url="file://$PROJECT_DIR$/js/utype.js" />
+      <root url="file://$PROJECT_DIR$/js/interval_switcher.js" />
+    </CLASSES>
+    <SOURCES />
+  </library>
+</component>

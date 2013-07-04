@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>utype</title>
+    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <script src="components/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="js/typing.js" type="text/javascript"></script>
+    <script src="js/interval_switcher.js"></script>
+    <script>
+        // タイピングクラスを用意
+        var typing = new Typing();
+
+        // テスト用歌詞データ用意
+        var testLyrics = [
+            {duration: 3000, originalLyric: '一番目の歌詞', kanaLyric: 'いちばんめのかし'},
+            {duration: 3000, originalLyric: '二番目の歌詞', kanaLyric: 'にばんめのかし'},
+            {duration: 3000, originalLyric: '三番目の歌詞', kanaLyric: 'さんばんめのかし'}
+        ];
+
+        // 歌詞切り替え役を用意
+        var switcher = new IntervalSwitcher(testLyrics);
+        switcher.onStartInterval = function (interval) {
+            // 歌詞を表示
+            $('#lyric-original').text(interval.originalLyric);
+            $('#lyric-kana').text(interval.kanaLyric);
+
+            // タイピングの問題文として登録
+            typing.register(interval.kanaLyric);
+        };
+        switcher.onFinish = function () {
+            $('#lyric-original').text('[end]');
+            $('#lyric-kana').text('[end]');
+            alert('ぱんぱかぱ～ん　あいうらBD/DVD好評発売中！');
+        };
+
+        // ここからメイン関数
+        $(document).ready(function () {
+            // ゲームが開始されているかどうか
+            var started = false;
+
+            // スペースキーが押されたら開始
+            $(document).on('keypress', function (e) {
+                if (started == false && e.which == 0x20) {
+                    started = true;
+                    switcher.start();
+                    return;
+                }
+
+                typing.answer(String.fromCharCode(e.which));
+
+                // ひらがな歌詞を残った歌詞だけにする
+                $('#lyric-kana').text(typing.getOriginalQuestion().substr(typing.getAbsoluteAnswered()));
+            });
+        });
+    </script>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>UType</h1>
+    </div>
+    <div class="body">
+
+        <h1>スペースキーでスタート！</h1>
+
+        <!-- progress bar -->
+        <div class="progress">
+            <div class="bar" style="width: 30%"></div>
+        </div>
+
+        <div id="lyric-original">ここに元の歌詞が表示されます</div>
+        <div id="lyric-kana">ここにひらがなのかしがひょうじされます</div>
+    </div>
+    <div class="footer"></div>
+</div>
+
+</body>
+</html>

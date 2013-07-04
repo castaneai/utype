@@ -1,0 +1,6 @@
+components/
+*.js
+*.js.map
+*.css
+# typing.jsのみjsファイルのまま残す
+!typing.js
