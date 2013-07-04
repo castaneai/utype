@@ -4,17 +4,12 @@
  * 生成時に歌詞情報（長さ、歌詞、ひらがな歌詞）のリストを登録すると
  * 歌詞の長さごとに歌詞を切り替え関数で通知してくれるクラス
  */
-class IntervalSwitcher {
+class LyricSwitcher {
 
     /**
      * 1インターバルが開始するたびに呼ばれる関数
      */
-    public onStartInterval: (interval: LyricInterval) => void;
-
-    /**
-     * 1インターバルが終了するたびに呼ばれる関数
-     */
-    public onEndInterval: (interval: LyricInterval) => void;
+    public onStartLyric: (interval: LyricInterval) => void;
 
     /**
      * すべての問題を打ち終わったら呼ばれる関数
@@ -46,18 +41,14 @@ class IntervalSwitcher {
     public start(): void {
         var subjectInterval = this._intervals[this._intervalIndex];
         // インターバル開始関数を呼び出す
-        if (this.onStartInterval != null) {
-            this.onStartInterval(subjectInterval);
+        if (this.onStartLyric != null) {
+            this.onStartLyric(subjectInterval);
         }
 
         window.setTimeout(() => {
 
             // 次があるなら次のインターバルへ引き継ぐ
             if (this._intervalIndex + 1 < this._intervals.length) {
-                // インターバル終了関数を呼び出す
-                if (this.onEndInterval != null) {
-                    this.onEndInterval(subjectInterval);
-                }
                 this._intervalIndex++;
                 this.start();
             }

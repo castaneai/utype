@@ -7,11 +7,9 @@
     <link rel="stylesheet" type="text/css" href="css/index.css"/>
     <script src="components/jquery/jquery.min.js" type="text/javascript"></script>
     <script src="js/typing.js" type="text/javascript"></script>
-    <script src="js/interval_switcher.js"></script>
+    <script src="js/lyric_switcher.js"></script>
+    <script src="js/utype.js" type="text/javascript"></script>
     <script>
-        // タイピングクラスを用意
-        var typing = new Typing();
-
         // テスト用歌詞データ用意
         var testLyrics = [
             {duration: 3000, originalLyric: '一番目の歌詞', kanaLyric: 'いちばんめのかし'},
@@ -19,17 +17,16 @@
             {duration: 3000, originalLyric: '三番目の歌詞', kanaLyric: 'さんばんめのかし'}
         ];
 
-        // 歌詞切り替え役を用意
-        var switcher = new IntervalSwitcher(testLyrics);
-        switcher.onStartInterval = function (interval) {
+        var utype = new UType(testLyrics);
+        utype.onStartLyric = function (lyric) {
             // 歌詞を表示
-            $('#lyric-original').text(interval.originalLyric);
-            $('#lyric-kana').text(interval.kanaLyric);
-
-            // タイピングの問題文として登録
-            typing.register(interval.kanaLyric);
+            $('#lyric-original').text(lyric.originalLyric);
+            $('#lyric-kana').text(lyric.kanaLyric);
         };
-        switcher.onFinish = function () {
+        utype.onSuccessTyping = function (info) {
+            $('#lyric-kana').text(info.unsolvedKana);
+        };
+        utype.onFinish = function () {
             $('#lyric-original').text('[end]');
             $('#lyric-kana').text('[end]');
             alert('ぱんぱかぱ～ん　あいうらBD/DVD好評発売中！');
@@ -37,21 +34,8 @@
 
         // ここからメイン関数
         $(document).ready(function () {
-            // ゲームが開始されているかどうか
-            var started = false;
-
-            // スペースキーが押されたら開始
             $(document).on('keypress', function (e) {
-                if (started == false && e.which == 0x20) {
-                    started = true;
-                    switcher.start();
-                    return;
-                }
-
-                typing.answer(String.fromCharCode(e.which));
-
-                // ひらがな歌詞を残った歌詞だけにする
-                $('#lyric-kana').text(typing.getOriginalQuestion().substr(typing.getAbsoluteAnswered()));
+                utype.pressKey(e.which);
             });
         });
     </script>
