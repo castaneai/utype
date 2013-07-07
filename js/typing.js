@@ -530,6 +530,10 @@
         return result.substr(this.currentIndex, result.length);
     }
 
+    function getAnsweredQuestionIndex() {
+        return this.currentIndex;
+    }
+
     function getRemainedOriginalQuestion() {
 
     }
@@ -555,6 +559,7 @@
     _Typing.prototype.getAnsweredString = getAnsweredString;
     _Typing.prototype.getOriginalQuestion = getOriginalQuestion;
     _Typing.prototype.getAbsoluteAnswered = getAbsoluteAnswered;
+    _Typing.prototype.getAnsweredQuestionIndex = getAnsweredQuestionIndex;
     _Typing.prototype.getFault = getFault;
 })
     (window);

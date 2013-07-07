@@ -22,7 +22,22 @@ declare class Typing {
     getOriginalQuestion(): string;
 
     /**
-     * 打ち終わった位置を返す
+     * ローマ字の問題文を返す
+     */
+    getQuestion(): string;
+
+    /**
+     * ひらがな文の打ち終わった位置を返す
      */
     getAbsoluteAnswered(): number;
+
+    /**
+     * 打ち終わったローマ字文を返す
+     */
+    getAnsweredString(): string;
+
+    /**
+     * 打ち終わってないローマ字文を返す
+     */
+    getRemainedQuestion(): string;
 }
