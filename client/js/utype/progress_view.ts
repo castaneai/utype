@@ -1,4 +1,4 @@
-/// <reference path="../../d.ts/DefinitelyTyped/jquery/jquery.d.ts" />
+/// <reference path="../../../d.ts/DefinitelyTyped/jquery/jquery.d.ts" />
 /// <reference path="interface.d.ts" />
 /// <reference path="timer.ts" />
 

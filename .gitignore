@@ -1,3 +1,5 @@
+.*
+node_modules/
 components/
 *.js
 *.js.map

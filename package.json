@@ -1,0 +1,20 @@
+{
+  "name": "utype",
+  "version": "0.0.0",
+  "description": "歌詞をタイピングするゲーム",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/castaneai/utype"
+  },
+  "author": "castaneai",
+  "license": "BSD",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-typescript": "~0.2.1",
+    "grunt-bower": "~0.5.1",
+    "grunt-contrib-watch": "~0.4.4",
+    "grunt-contrib-connect": "~0.3.0",
+    "grunt-contrib-less": "~0.6.3"
+  }
+}
