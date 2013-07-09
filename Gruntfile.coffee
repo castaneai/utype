@@ -48,6 +48,7 @@ module.exports = (grunt) ->
       livereload:
         options:
           port: 666
+          base: 'client'
 
   # npmからとってくるプラグイン
   pkg = grunt.file.readJSON('package.json')
