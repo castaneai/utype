@@ -24,10 +24,10 @@ module.exports = (grunt) ->
 
     # bowerのライブラリの出力
     bower:
-      development:
-        dest: 'client/js'
+      install:
         options:
-          basePath: 'components'
+          targetDir: 'client/js'
+          install: true
 
     # ファイルの更新を監視する
     watch:
@@ -56,5 +56,6 @@ module.exports = (grunt) ->
       grunt.loadNpmTasks(taskName)
 
   # Gruntタスクの登録 grunt compile のようにして呼び出す
-  grunt.registerTask('compile', ['typescript', 'less', 'bower'])
-  grunt.registerTask('server', ['connect', 'watch'])
+  grunt.registerTask('compile', ['typescript', 'less'])
+  grunt.registerTask('server', ['compile', 'connect', 'watch'])
+  grunt.registerTask('init', ['bower:install', 'compile'])
