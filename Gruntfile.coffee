@@ -8,7 +8,6 @@ module.exports = (grunt) ->
         options:
           target: 'es5'
           sourcemap: true
-          declaration: true
           base_path: 'client/js'
 
     # LESSのコンパイル
@@ -22,7 +21,7 @@ module.exports = (grunt) ->
           ext: '.css'
         ]
 
-    # bowerのライブラリの出力
+    # bowerのライブラリ出力
     bower:
       install:
         options:
@@ -40,8 +39,8 @@ module.exports = (grunt) ->
         files: ['client/css/**/*.less']
         tasks: 'less'
       html:
-        files: '*.html'
-        tasks: ['']
+        files: '**/*.html'
+        tasks: ''
 
     # サーバー
     connect:
