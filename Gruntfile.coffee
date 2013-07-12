@@ -3,8 +3,8 @@ module.exports = (grunt) ->
     # Typescriptのコンパイル
     typescript:
       client:
-        src: ['client/js/**/*.ts']
-        dest: 'client/js'
+        src: 'client/js/**/*.ts'
+        dest: 'client/js/utype.js'
         options:
           target: 'es5'
           sourcemap: true
