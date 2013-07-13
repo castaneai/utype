@@ -9,6 +9,13 @@ module.exports = (grunt) ->
           target: 'es5'
           sourcemap: true
           base_path: 'client/js'
+      server:
+        src: 'server/**/*.ts'
+        dest: 'server/app.js'
+        options:
+          target: 'es5'
+          sourcemap: false
+          base_path: 'server'
 
     # LESSのコンパイル
     less:
@@ -32,15 +39,23 @@ module.exports = (grunt) ->
     watch:
       options:
         livereload: true
-      typescript:
-        files: ['client/js/**/*.ts']
-        tasks: 'typescript'
+      typescript_client:
+        files: 'client/**/*.ts'
+        tasks: 'typescript:client'
+      typescript_server:
+        files: 'server/**/*.ts'
+        tasks: 'typescript:server'
       less:
-        files: ['client/css/**/*.less']
+        files: 'client/css/**/*.less'
         tasks: 'less'
       html:
         files: '**/*.html'
         tasks: ''
+      express:
+        files: 'server/**/*.js'
+        tasks: ['express:dev:stop', 'express:dev']
+        options:
+          nospawn: true
 
     # サーバー
     connect:
@@ -49,6 +64,12 @@ module.exports = (grunt) ->
           port: 666
           base: 'client'
 
+    express:
+      dev:
+        options:
+          script: 'server/app.js'
+          port: 666
+
   # npmからとってくるプラグイン
   pkg = grunt.file.readJSON('package.json')
   for taskName of pkg.devDependencies
@@ -56,6 +77,8 @@ module.exports = (grunt) ->
       grunt.loadNpmTasks(taskName)
 
   # Gruntタスクの登録 grunt compile のようにして呼び出す
-  grunt.registerTask('compile', ['typescript', 'less'])
-  grunt.registerTask('server', ['compile', 'connect', 'watch'])
+  grunt.registerTask('compile:client', ['typescript', 'less'])
+  grunt.registerTask('compile:server', ['typescript:server'])
+  grunt.registerTask('compile', ['compile:client', 'compile:server'])
+  grunt.registerTask('server', ['compile:server', 'express:dev', 'watch'])
   grunt.registerTask('init', ['bower:install', 'compile'])

@@ -8,8 +8,8 @@ UType
 - [node.js] (http://nodejs.org/)
 - [npm] (https://npmjs.org/)
 
-実行方法
-==============
+ローカルでの実行方法
+=====================
 1. 作業自動化ツールgruntを入れる
 ```
 $ npm install -g grunt-cli
@@ -25,7 +25,10 @@ $ npm install
 $ grunt init
 ```
 
-4. http://localhost:666/にサーバーが立つ
+4. サーバーを立てる
 ```
 $ grunt server
 ```
+
+5. ブラウザで以下のURLにアクセスすると実行できる
+- http://localhost:666
