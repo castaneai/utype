@@ -31,4 +31,6 @@ $ grunt server
 ```
 
 5. ブラウザで以下のURLにアクセスすると実行できる
-- http://localhost:666
+```
+http://localhost:666
+```
