@@ -2,6 +2,7 @@
 /// <reference path="lyric_set.ts" />
 /// <reference path="timer.ts" />
 /// <reference path="../../../d.ts/typing.d.ts" />
+/// <reference path="event.ts" />
 
 module utype {
 
@@ -21,29 +22,29 @@ module utype {
     export class Game implements Pausable, Stateful {
 
         /**
-         * ゲームを開始したときに呼び出される関数
+         * ゲームを開始したとき
          */
-        public onStart: (info: TypingInfo) => void;
+        public onStart = new Event<() => void>();
 
         /**
-         * ゲームが終了したときに呼び出される関数
+         * ゲームが終了したとき
          */
-        public onFinish: () => void;
+        public onFinish = new Event<() => void>();
 
         /**
-         * 歌詞が切り替わったときに呼び出される関数
+         * 歌詞が切り替わったとき
          */
-        public onSwitchLyric: (lyric: Lyric, info: TypingInfo) => void;
+        public onSwitchLyric = new Event<(lyric: Lyric, info: TypingInfo) => void>();
 
         /**
-         * ローマ字1文字タイプ成功したときに呼び出される関数
+         * ローマ字1文字タイプ成功したとき
          */
-        public onSuccessTyping: (info: TypingInfo) => void;
+        public onSuccessTyping = new Event<(info: TypingInfo) => void>();
 
         /**
-         * ローマ字1文字タイプミスしたときに呼び出される関数
+         * ローマ字1文字タイプミスしたとき
          */
-        public onMissTyping: (info: TypingInfo) => void;
+        public onMissTyping = new Event<(info: TypingInfo) => void>();
 
         /**
          * ゲームが一時停止したときに呼び出される関数

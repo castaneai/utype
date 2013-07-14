@@ -2,6 +2,10 @@
 
 module utype {
 
+    /**
+     * 歌詞のリスト
+     * 複数の歌詞の中で現在どの歌詞を表示しているかの情報を持つ
+     */
     export class LyricSet {
 
         private _lyrics: Lyric[];
