@@ -44,11 +44,6 @@ $(document).ready(() => {
     documentReady.resolve();
 });
 
-function focusToDocument() {
-    document.body.tabIndex = 0;
-    document.body.focus();
-}
-
 var gameReady = jQuery.when(youTubeReady, documentReady);
 gameReady.done(() => {
     // ゲーム全体の準備が完了したらここからプログラムが始まる

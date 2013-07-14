@@ -18,6 +18,15 @@ module utype {
         }
 
         /**
+         * ドキュメントにフォーカスを合わせる
+         * Flashにフォーカスを取られてしまうのを回避するために使う
+         */
+        public focusDocument(): void {
+            document.body.tabIndex = 0;
+            document.body.focus();
+        }
+
+        /**
          * すべての歌詞を消去する
          */
         public clearAllLyric(): void {
