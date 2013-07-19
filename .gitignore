@@ -6,3 +6,4 @@ components/
 *.css
 # typing.jsのみjsファイルのまま残す
 !typing.js
+!*.conf.js
