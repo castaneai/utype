@@ -70,6 +70,11 @@ module.exports = (grunt) ->
           script: 'server/app.js'
           port: 666
 
+    # テスト
+    karma:
+      client:
+        configFile: 'karma.conf.js'
+
   # npmからとってくるプラグイン
   pkg = grunt.file.readJSON('package.json')
   for taskName of pkg.devDependencies
@@ -81,4 +86,5 @@ module.exports = (grunt) ->
   grunt.registerTask('compile:server', ['typescript:server'])
   grunt.registerTask('compile', ['compile:client', 'compile:server'])
   grunt.registerTask('server', ['compile:server', 'express:dev', 'watch'])
+  grunt.registerTask('test', ['compile', 'karma'])
   grunt.registerTask('init', ['bower:install', 'compile'])
