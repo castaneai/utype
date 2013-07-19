@@ -1,6 +1,10 @@
 {
     "framework": "jasmine",
+    "before_tests": "grunt typescript:test",
     "src_files": [
+        "test/**/*.ts"
+    ],
+    "serve_files": [
         "test/**/*.js"
     ]
 }

@@ -16,6 +16,13 @@ module.exports = (grunt) ->
           target: 'es5'
           sourcemap: false
           base_path: 'server'
+      test:
+        src: 'test/**/*.ts'
+        dest: 'test/test.js'
+        options:
+          target: 'es5'
+          sourcemap: false
+          base_path: 'test'
 
     # LESSのコンパイル
     less:
@@ -77,8 +84,7 @@ module.exports = (grunt) ->
       grunt.loadNpmTasks(taskName)
 
   # Gruntタスクの登録 grunt compile のようにして呼び出す
-  grunt.registerTask('compile:client', ['typescript', 'less'])
+  grunt.registerTask('compile:client', ['typescript:client', 'less'])
   grunt.registerTask('compile:server', ['typescript:server'])
-  grunt.registerTask('compile', ['compile:client', 'compile:server'])
   grunt.registerTask('server', ['compile:server', 'express:dev', 'watch'])
-  grunt.registerTask('init', ['bower:install', 'compile'])
+  grunt.registerTask('init', ['bower:install', 'compile:client', 'compile:server'])
