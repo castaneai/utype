@@ -8,15 +8,6 @@ module utype {
      */
     export class View {
 
-        private _lyricProgress: ProgressView;
-
-        private _totalProgress: ProgressView;
-
-        constructor() {
-            this._lyricProgress = new ProgressView($('#interval-bar'));
-            this._totalProgress = new ProgressView($('#total-bar'));
-        }
-
         /**
          * ドキュメントにフォーカスを合わせる
          * Flashにフォーカスを取られてしまうのを回避するために使う
@@ -75,47 +66,6 @@ module utype {
         public setSolvedRomaLyric(solved: string, unsolved: string): void {
             $('#lyric-roma .solved').text(solved.toUpperCase());
             $('#lyric-roma .unsolved').text(unsolved.toUpperCase());
-        }
-
-        /**
-         * 1つの歌詞インターバルの進行状況を表示するプログレスバーを動かす
-         * @param percentage プログレスバーの幅％(1～100)
-         * @param duration バーの移動にかける時間（ミリ秒）
-         */
-        public startLyricProgress(percentage: number, duration: number): void {
-            this._lyricProgress.start(percentage, duration);
-        }
-
-        /**
-         * ゲーム全体の進行状況を表示するプログレスバーを動かす
-         * @param percentage プログレスバーの幅％(1～100)
-         * @param duration バーの移動にかける時間（ミリ秒）
-         */
-        public startTotalProgress(percentage: number, duration: number): void {
-            this._totalProgress.start(percentage, duration);
-        }
-
-        /**
-         * 1つの歌詞インターバルの進行状況を表すプログレスバーを瞬時に0％にする
-         */
-        public clearLyricProgress(): void {
-            this._lyricProgress.start(0, 0);
-        }
-
-        /**
-         * すべてのプログレスバーを止める
-         */
-        public pauseAllProgressBar(): void {
-            this._lyricProgress.pause();
-            this._totalProgress.pause();
-        }
-
-        /**
-         * すべてのプログレスバーを再開する
-         */
-        public resumeAllProgressBar(): void {
-            this._lyricProgress.resume();
-            this._totalProgress.resume();
         }
 
         public setScore(val: number): void {

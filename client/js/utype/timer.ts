@@ -1,4 +1,5 @@
 /// <reference path="interface.d.ts" />
+/// <reference path="event.ts" />
 
 module utype {
 
@@ -8,15 +9,29 @@ module utype {
         PAUSE
     }
 
-    export class Timer implements Pausable, Stateful {
+    /**
+     * 指定時間経過後、イベントを発生させるクラス
+     * 一時停止・再開が可能
+     *
+     * 一度経過が終わったあとでも、もう一回startメソッドを呼び出すことで
+     * 同じオブジェクトで何回でも経過イベントを取れる
+     */
+    export class Timer implements Stateful {
 
-        public onStart: (duration: number) => void;
+        /**
+         * 一時停止したとき
+         */
+        public onPause = new Event<(leftDuration: number) => void>();
 
-        public onPause: (leftDuration: number) => void;
+        /**
+         * 再開したとき
+         */
+        public onResume = new Event<(leftDuration: number) => void>();
 
-        public onResume: (leftDuration: number) => void;
-
-        public onFinish: () => void;
+        /**
+         * 指定時間が経過したとき
+         */
+        public onElapsed = new Event<() => void>();
 
         /**
          * タイマーの状態
@@ -42,7 +57,7 @@ module utype {
         /**
          * タイマーを開始・再開した時刻
          */
-        private _lastRunDate: Date;
+        private _lastStartedDate: Date;
 
         /**
          * タイマーを開始する
@@ -54,10 +69,7 @@ module utype {
             }
             this._state = TimerState.RUN;
             this._duration = duration;
-            this._setTimer(duration);
-            if (this.onStart != null) {
-                this.onStart(duration);
-            }
+            this._startTimer(duration);
         }
 
         /**
@@ -76,46 +88,45 @@ module utype {
             }
             this._state = TimerState.PAUSE;
             // 開始/再開時から今までの経過時間分を足す
-            this._elapsedDuration += new Date().getTime() - this._lastRunDate.getTime();
+            this._elapsedDuration += new Date().getTime() - this._lastStartedDate.getTime();
+            // 内部タイマーを停止する
             window.clearInterval(this._timerId);
-            var leftDuration = this._duration - this._elapsedDuration;
-            if (this.onPause != null) {
-                this.onPause(leftDuration);
-            }
+
+            this.onPause.dispatch();
         }
 
+        /**
+         * 一時停止したタイマーを再開する
+         */
         public resume(): void {
             if (this._state !== TimerState.PAUSE) {
                 throw new Error('タイマーを再開できるのは状態がPAUSEのときのみです');
             }
             this._state = TimerState.RUN;
+            // 残った時間分のタイマーを作って開始する
             var leftDuration = this._duration - this._elapsedDuration;
-            this._setTimer(leftDuration);
-            if (this.onResume != null) {
-                this.onResume(leftDuration);
-            }
+            this._startTimer(leftDuration);
+
+            this.onResume.dispatch();
         }
 
+        /**
+         * 一時停止・再開を切り替える
+         */
         public togglePause(): void {
-            if (this.getState() === TimerState.RUN) {
-                this.pause();
-            }
-            else {
-                this.resume();
-            }
+            (this.getState() === TimerState.RUN) ? this.pause() : this.resume();
         }
 
-        private _setTimer(duration: number): void {
-            if (this._state !== TimerState.RUN) {
-                throw new Error('タイマーを設置できるのは状態がRUNのときのみです');
-            }
-
+        /**
+         * Javascript内部のタイマーを開始する
+         * @param duration タイマーの設定時間（ミリ秒）
+         * @private
+         */
+        private _startTimer(duration: number): void {
             this._timerId = window.setTimeout(() => {
-                if (this.onFinish != null) {
-                    this.onFinish();
-                }
+                this.onElapsed.dispatch();
             }, duration);
-            this._lastRunDate = new Date();
+            this._lastStartedDate = new Date();
         }
     }
 }

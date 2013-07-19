@@ -1,6 +1,5 @@
 /// <reference path="../../d.ts/DefinitelyTyped/jquery/jquery.d.ts" />
 /// <reference path="utype/lyric_set.ts" />
-/// <reference path="utype/game.ts" />
 /// <reference path="utype/video_player.ts" />
 /// <reference path="utype/view.ts" />
 
@@ -30,6 +29,7 @@ var testLyrics = [
 
 // YouTube APIとjQueryの両方が準備完了するまで待機して
 // 完了したらメイン関数を呼ぶようにする
+/*
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -53,18 +53,18 @@ gameReady.done(() => {
 
     videoPlayer.onPlay = () => {
         if (game.getState() === utype.GameState.READY) {
-            focusToDocument();
+            view.focusDocument();
             game.start();
         }
         else if (game.getState() === utype.GameState.PAUSE) {
-            focusToDocument();
+            view.focusDocument();
             game.resume();
         }
     };
 
     videoPlayer.onPause = () => {
         if (game.getState() === utype.GameState.PLAY) {
-            focusToDocument();
+            view.focusDocument();
             game.pause();
         }
     };
@@ -129,3 +129,4 @@ gameReady.done(() => {
         game.togglePause();
     });
 });
+*/

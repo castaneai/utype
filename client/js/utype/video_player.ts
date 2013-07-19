@@ -1,4 +1,5 @@
 /// <reference path="../../../d.ts/DefinitelyTyped/youtube/Youtube.d.ts" />
+/// <reference path="event.ts" />
 
 module utype {
 
@@ -11,12 +12,12 @@ module utype {
          * 動画が再生されたときに呼び出される関数
          * 一時停止状態を解除したときも含む
          */
-        public onPlay: () => void;
+        public onPlay = new Event<() => void>();
 
         /**
          * 動画が一時停止されたときに呼び出される関数
          */
-        public onPause: () => void;
+        public onPause = new Event<() => void>();
 
         /**
          * YouTube APIのPlayer
@@ -75,15 +76,11 @@ module utype {
         private _onPlayerStateChanged(state: YT.PlayerState): void {
             switch (state) {
                 case YT.PlayerState.PLAYING:
-                    if (this.onPlay != null) {
-                        this.onPlay();
-                    }
+                    this.onPlay.dispatch();
                     break;
 
                 case YT.PlayerState.PAUSED:
-                    if (this.onPause != null) {
-                        this.onPause();
-                    }
+                    this.onPause.dispatch();
                     break;
             }
         }
