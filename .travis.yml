@@ -1,9 +1,9 @@
 language: node_js
-  node_js:
-    - 0.10
+node_js:
+  - "0.10"
 
-  bedore_script:
-    - npm install testem
+bedore_script:
+  - npm install testem
 
-  script:
-    - testem ci
+script:
+  - testem ci
