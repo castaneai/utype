@@ -20,5 +20,8 @@
     "socket.io": "~0.9.16",
     "express": "~3.3.4",
     "testem": "~0.3.21"
+  },
+  "scripts": {
+      "test": "testem ci"
   }
 }
