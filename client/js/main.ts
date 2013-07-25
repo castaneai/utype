@@ -29,7 +29,6 @@ var testLyrics = [
 
 // YouTube APIとjQueryの両方が準備完了するまで待機して
 // 完了したらメイン関数を呼ぶようにする
-/*
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -46,6 +45,7 @@ $(document).ready(() => {
 
 var gameReady = jQuery.when(youTubeReady, documentReady);
 gameReady.done(() => {
+    /*
     // ゲーム全体の準備が完了したらここからプログラムが始まる
     var videoPlayer = new utype.VideoPlayer('video-player', 'jZG4SYdvbNE');
     var game = new utype.Game(new utype.LyricSet(testLyrics));
@@ -128,5 +128,5 @@ gameReady.done(() => {
         }
         game.togglePause();
     });
+    */
 });
-*/

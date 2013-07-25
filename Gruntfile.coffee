@@ -1,90 +1,79 @@
+'use strict'
+
+mountFolder = (connect, dir) ->
+  return connect['static'](require('path').resolve(path))
+
 module.exports = (grunt) ->
+  # load all grunt tasks
+  require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks)
+
+  dirConfig =
+    client: 'client'
+    server: 'server'
+    tmp: '.tmp'
+    dist: 'dist'
+    test: 'test'
+
   grunt.initConfig
+    dirConfig: dirConfig
+
     # Typescriptのコンパイル
     typescript:
       client:
-        src: 'client/js/**/*.ts'
-        dest: 'client/js/utype.js'
+        src: '<%= dirConfig.client %>/js/{,*/}*.ts'
+        dest: '<%= dirConfig.tmp %>/js/utype.js'
         options:
           target: 'es5'
           sourcemap: true
-          base_path: 'client/js'
-      server:
-        src: 'server/**/*.ts'
-        dest: 'server/app.js'
-        options:
-          target: 'es5'
-          sourcemap: false
-          base_path: 'server'
       test:
-        src: 'test/**/*.ts'
-        dest: 'test/test.js'
+        src: '<%= dirConfig.test %>/{,*/}*.ts'
+        dest: '<%= dirConfig.test %>/test.js'
         options:
           target: 'es5'
           sourcemap: false
           base_path: 'test'
-
-    # LESSのコンパイル
-    less:
-      development:
-        files: [
-          expand: true,
-          cwd: 'client/css'
-          src: ['*.less']
-          dest: 'client/css'
-          ext: '.css'
-        ]
-
-    # bowerのライブラリ出力
-    bower:
-      install:
-        options:
-          targetDir: 'client/js'
-          install: true
 
     # ファイルの更新を監視する
     watch:
       options:
         livereload: true
       typescript_client:
-        files: 'client/**/*.ts'
+        files: '<%= dirConfig.client %>/{,*/}*.ts'
         tasks: 'typescript:client'
-      typescript_server:
-        files: 'server/**/*.ts'
-        tasks: 'typescript:server'
-      less:
-        files: 'client/css/**/*.less'
-        tasks: 'less'
       html:
-        files: '**/*.html'
-        tasks: ''
+        files: '<%= dirConfig.client %>/{,*/}*.html'
+      css:
+        files: '{<%= dirConfig.tmp %>,<%= dirConfig.client %>}/css/{,*/}*.css'
       express:
-        files: 'server/**/*.js'
+        files: '<%= dirConfig.server %>/{,*/}*.js'
         tasks: ['express:dev:stop', 'express:dev']
         options:
           nospawn: true
 
     # サーバー
     connect:
+      options:
+        port: 666
+        hostname: 'localhost'
       livereload:
         options:
-          port: 666
-          base: 'client'
+          middleware: (connect) ->
+            return [
+              require('connect-livereload')()
+              mountFolder(connect, dirConfig.tmp)
+              mountFolder(connect, dirConfig.client)
+            ]
+
+    open:
+      server:
+        url: 'http://localhost:<%= connect.options.port %>'
 
     express:
       dev:
         options:
-          script: 'server/app.js'
+          script: '<%= dirConfig.server %>/app.js'
           port: 666
 
-  # npmからとってくるプラグイン
-  pkg = grunt.file.readJSON('package.json')
-  for taskName of pkg.devDependencies
-    if taskName.substr(0, 6) == 'grunt-'
-      grunt.loadNpmTasks(taskName)
-
   # Gruntタスクの登録 grunt compile のようにして呼び出す
-  grunt.registerTask('compile:client', ['typescript:client', 'less'])
-  grunt.registerTask('compile:server', ['typescript:server'])
-  grunt.registerTask('server', ['compile:server', 'express:dev', 'watch'])
-  grunt.registerTask('init', ['bower:install', 'compile:client', 'compile:server'])
+  grunt.registerTask('compile', ['typescript'])
+  grunt.registerTask('server', ['compile', 'express:dev', 'watch'])
