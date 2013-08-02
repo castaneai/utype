@@ -1,8 +1,5 @@
 'use strict'
 
-mountFolder = (connect, dir) ->
-  return connect['static'](require('path').resolve(path))
-
 module.exports = (grunt) ->
   # load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks)
@@ -17,63 +14,51 @@ module.exports = (grunt) ->
   grunt.initConfig
     dirConfig: dirConfig
 
-    # Typescriptのコンパイル
     typescript:
       client:
-        src: '<%= dirConfig.client %>/js/{,*/}*.ts'
-        dest: '<%= dirConfig.tmp %>/js/utype.js'
+        src: '<%= dirConfig.client %>/scripts/{,*/}*.ts'
+        dest: '<%= dirConfig.tmp %>/<%= dirConfig.client %>/scripts/utype.js'
         options:
           target: 'es5'
           sourcemap: true
+      server:
+        src: '<%= dirConfig.server %>/{,*/}*.ts'
+        dest: '<%= dirConfig.tmp %>/<%= dirConfig.server %>/server.js'
+        options:
+          target: 'es5'
+          sourcemap: false
       test:
         src: '<%= dirConfig.test %>/{,*/}*.ts'
-        dest: '<%= dirConfig.test %>/test.js'
+        dest: '<%= dirConfig.tmp %>/<%= dirConfig.test %>/test.js'
         options:
           target: 'es5'
           sourcemap: false
           base_path: 'test'
 
-    # ファイルの更新を監視する
     watch:
       options:
         livereload: true
       typescript_client:
         files: '<%= dirConfig.client %>/{,*/}*.ts'
         tasks: 'typescript:client'
-      html:
-        files: '<%= dirConfig.client %>/{,*/}*.html'
-      css:
-        files: '{<%= dirConfig.tmp %>,<%= dirConfig.client %>}/css/{,*/}*.css'
-      express:
-        files: '<%= dirConfig.server %>/{,*/}*.js'
-        tasks: ['express:dev:stop', 'express:dev']
-        options:
-          nospawn: true
-
-    # サーバー
-    connect:
-      options:
-        port: 666
-        hostname: 'localhost'
-      livereload:
-        options:
-          middleware: (connect) ->
-            return [
-              require('connect-livereload')()
-              mountFolder(connect, dirConfig.tmp)
-              mountFolder(connect, dirConfig.client)
-            ]
+      typescript_server:
+        files: '<%= dirConfig.server %>/{,*/}*.ts'
+        tasks: 'typescript:server'
 
     open:
       server:
-        url: 'http://localhost:<%= connect.options.port %>'
+        url: 'http://localhost:<%= express.server.options.port %>'
 
     express:
-      dev:
+      server:
         options:
-          script: '<%= dirConfig.server %>/app.js'
           port: 666
+          server: '<%= dirConfig.tmp %>/<%= dirConfig.server %>/server.js'
+          bases: ['<%= dirConfig.client %>', '<%= dirConfig.tmp %>/<%= dirConfig.client %>']
+          livereload: true
+          # 現在serverreloadはうまく動かない
+          # serverreload: true
 
   # Gruntタスクの登録 grunt compile のようにして呼び出す
   grunt.registerTask('compile', ['typescript'])
-  grunt.registerTask('server', ['compile', 'express:dev', 'watch'])
+  grunt.registerTask('server', ['compile', 'express', 'open', 'watch'])

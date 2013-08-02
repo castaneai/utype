@@ -2,27 +2,30 @@
   "name": "utype",
   "version": "0.0.0",
   "description": "歌詞をタイピングするゲーム",
-  "main": "server.js",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/castaneai/utype"
   },
   "author": "castaneai",
-  "license": "BSD",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/castaneai/utype/issues"
+  },
   "devDependencies": {
     "grunt": "~0.4.1",
-    "grunt-typescript": "~0.2.1",
-    "grunt-contrib-watch": "~0.4.4",
-    "grunt-contrib-connect": "~0.3.0",
-    "grunt-contrib-less": "~0.6.3",
-    "grunt-bower-task": "~0.2.3",
-    "grunt-express-server": "~0.4.1",
-    "socket.io": "~0.9.16",
+    "grunt-contrib-watch": "~0.5.1",
+    "grunt-express": "~1.0.0-beta2",
+    "matchdep": "~0.1.2",
+    "grunt-typescript": "~0.2.2",
     "express": "~3.3.4",
-    "testem": "~0.3.21",
-    "matchdep": "~0.1.2"
-  },
-  "scripts": {
-    "test": "testem ci"
+    "socket.io": "~0.9.16",
+    "grunt-open": "~0.2.1"
   }
 }
