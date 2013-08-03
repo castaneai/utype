@@ -124,6 +124,7 @@ module utype {
          */
         private _startTimer(duration: number): void {
             this._timerId = window.setTimeout(() => {
+                this._state = TimerState.READY;
                 this.onElapsed.dispatch();
             }, duration);
             this._lastStartedDate = new Date();

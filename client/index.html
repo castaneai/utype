@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="utype" ng-controller="MainController">
 <head>
     <meta charset="utf-8"/>
     <title>utype</title>
+
+    <!-- styles -->
     <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css">
     <link rel="stylesheet" type="text/css" href="styles/index.css"/>
+
     <!-- vendor libs -->
     <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
@@ -23,11 +26,11 @@
     <!-- utype -->
     <script src="scripts/utype.js"></script>
 </head>
-<body>
+<body ng-keydown="onKeyDown">
 
 <div class="container">
     <div class="header">
-        <h1>UType</h1>
+        <h1>{{ title }}</h1>
     </div>
     <div class="body">
         <div id="video-player"></div>
@@ -41,20 +44,20 @@
         </div>
 
         <div id="lyric-kana" class="lyric">
-            <span class="solved"></span><span class="unsolved"></span>
+            <span class="solved">{{ lyric.kana.solved }}</span><span class="unsolved">{{ lyric.kana.unsolved }}</span>
         </div>
         <div id="lyric-original" class="lyric">
-            <span></span>
+            <span>{{ lyric.original }}</span>
         </div>
         <div id="lyric-roma" class="lyric">
-            <span class="solved"></span><span class="unsolved"></span>
+            <span class="solved">{{ lyric.roma.solved }}</span><span class="unsolved">{{ lyric.roma.unsolved }}</span>
         </div>
 
         <!-- info area -->
         <ul class="info">
-            <li>Score: <span id="score">0</span></li>
-            <li>Miss: <span id="miss">0</span></li>
-            <li>Rank: <span id="rank">F</span></li>
+            <li>Score: {{ score }}</li>
+            <li>Miss: {{ missCount }}</li>
+            <li>Rank: {{ rank }}</li>
         </ul>
 
     </div>

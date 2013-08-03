@@ -54,5 +54,37 @@ module utype {
                 this.onMiss.dispatch();
             }
         }
+
+        /**
+         * ひらがなの問題文の打ち終わった部分を返す
+         */
+        public getSolvedKana(): string {
+            var kana = this._typing.getOriginalQuestion();
+            var solvedCount = this._typing.getAbsoluteAnswered();
+            return kana.substr(0, solvedCount);
+        }
+
+        /**
+         * ひらがなの問題文のまだ打ち終わってない部分を返す
+         */
+        public getUnsolvedKana(): string {
+            var kana = this._typing.getOriginalQuestion();
+            var solvedCount = this._typing.getAbsoluteAnswered();
+            return kana.substr(solvedCount);
+        }
+
+        /**
+         * ローマ字の問題文の打ち終わった部分を返す
+         */
+        public getSolvedRoma(): string {
+            return this._typing.getAnsweredString();
+        }
+
+        /**
+         * ローマ字の問題文のまだ打ち終わってない部分を返す
+         */
+        public getUnsolvedRoma(): string {
+            return this._typing.getRemainedQuestion();
+        }
     }
 }
