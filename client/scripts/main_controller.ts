@@ -89,7 +89,7 @@ app.controller('MainController', ['$scope', function($scope) {
      * キーが押されたとき
      * @param event キーボードイベント
      */
-    $scope.onKeyDown = function(event: JQueryKeyEventObject): void {
+    $scope.onKeyPress = function(event: JQueryKeyEventObject): void {
         if (_state === GameState.READY && event.which == 0x20) {
             _startGame();
             _state = GameState.PLAY;
@@ -117,6 +117,7 @@ app.controller('MainController', ['$scope', function($scope) {
         // タイマー開始
         _timer.start(newLyric.duration);
         // プログレスバー開始
+        _intervalProgressBar.setPercentage(0);
         _intervalProgressBar.startAnimation(100, newLyric.duration);
         // 歌詞表示更新
         _showLyric();
@@ -133,20 +134,20 @@ app.controller('MainController', ['$scope', function($scope) {
                     unsolved: _typing.getUnsolvedKana()
                 },
                 roma: {
-                    solved: _typing.getSolvedRoma(),
-                    unsolved: _typing.getUnsolvedRoma()
+                    solved: _typing.getSolvedRoma().toUpperCase(),
+                    unsolved: _typing.getUnsolvedRoma().toUpperCase()
                 },
                 original: _lyrics.getCurrentLyric().originalLyric
             };
         });
     }
 }]);
-app.directive('ngKeydown', function() {
+app.directive('ngKeypress', function() {
     return {
         restrict: 'A',
         link: function(scope, elem, attr, ctrl) {
-            elem.bind('keydown', function(e) {
-                scope[attr['ngKeydown']](e);
+            elem.bind('keypress', function(e) {
+                scope[attr['ngKeypress']](e);
             });
         }
     };

@@ -33,5 +33,9 @@ module utype {
         public stopAnimation(): void {
             this._barElement.stop();
         }
+
+        public setPercentage(percentage: number): void {
+            this.startAnimation(percentage, 0);
+        }
     }
 }
