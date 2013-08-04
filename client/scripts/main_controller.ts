@@ -8,7 +8,7 @@
 
 // テスト用歌詞データ用意
 var testLyrics = [
-    {duration: 12400, originalLyric: '～間奏～', kanaLyric: ''},
+    {duration: 1240, originalLyric: '～間奏～', kanaLyric: ''},
     {duration: 4855, originalLyric: '真っ直ぐな想いがみんなを結ぶ', kanaLyric: 'まっすぐなおもいがみんなをむすぶ'},
     {duration: 4873, originalLyric: '本気でも不器用ぶつかり合うこころ', kanaLyric: 'ほんきでもぶきようぶつかりあうこころ'},
     {duration: 4892, originalLyric: 'それでも見たいよ大きな夢は', kanaLyric: 'それでもみたいよおおきなゆめは'},
@@ -39,10 +39,61 @@ enum GameState {
 var app = angular.module('utype', []);
 app.controller('MainController', ['$scope', function($scope) {
 
+    // Viewと連動する変数の初期値を設定
     $scope.title = 'UType!';
-    $scope.score = 0;
-    $scope.missCount = 0;
-    $scope.rank = 'F';
+    $scope.score = {
+        point: 0,
+        missCount: 0
+    };
+
+    // Viewと連動する関数を設定
+    /**
+     * 歌詞を表示する
+     */
+    $scope.setLyric = (lyric: utype.Lyric) => {
+        _intervalProgressBar.setPercentage(0);
+        _intervalProgressBar.startAnimation(100, lyric.duration);
+        $scope.lyric = {};
+        $scope.lyric.originalLyric = lyric.originalLyric;
+        $scope.updateLyricState();
+    }
+
+    /**
+     * 打ち終わった部分とまだの部分の色分け表示を更新する
+     * ↑のsetLyricは歌詞が始まったときのみ呼び出されるがこっちは
+     * キー入力があるたびに呼び出される
+     */
+    $scope.updateLyricState = () => {
+        $scope.lyric.kana = {
+            solved: _typing.getSolvedKana(),
+            unsolved: _typing.getUnsolvedKana()
+        };
+        $scope.lyric.roma = {
+            solved: _typing.getSolvedRoma(),
+            unsolved: _typing.getUnsolvedRoma()
+        };
+        $scope.$apply();
+    }
+
+    /**
+     * キーが押されたとき
+     */
+    $scope.onKeyPress = function(event: JQueryKeyEventObject): void {
+        if (_state === GameState.READY && event.which == 0x20) {
+            _startGame();
+            _state = GameState.PLAY;
+        }
+        else if(_state === GameState.PLAY) {
+            var typedChar = String.fromCharCode(event.which);
+            if (_typing.type(typedChar)) {
+                $scope.score.point += 100;
+            }
+            else {
+                $scope.score.missCount += 1;
+            }
+            $scope.updateLyricState();
+        }
+    }
 
     /**
      * 現在のゲームの状態
@@ -53,13 +104,6 @@ app.controller('MainController', ['$scope', function($scope) {
      * タイピングのロジック
      */
     var _typing: utype.TypingLogic = new utype.TypingLogic();
-    _typing.onSuccess.addListener(function() {
-        $scope.$apply(() => { $scope.score += 100; });
-        _showLyric();
-    });
-    _typing.onMiss.addListener(function() {
-        $scope.$apply(() => { $scope.missCount += 1});
-    });
 
     /**
      * 歌詞リスト
@@ -67,10 +111,13 @@ app.controller('MainController', ['$scope', function($scope) {
     var _lyrics: utype.LyricSet = new utype.LyricSet(testLyrics);
 
     /**
-     *
+     * 曲全体の進行度を表すプログレスバー
      */
     var _totalProgressBar = new utype.ProgressView(jQuery('#total-bar'));
 
+    /**
+     * 現在の歌詞インターバルの進行度を表すプログレスバー
+     */
     var _intervalProgressBar = new utype.ProgressView(jQuery('#interval-bar'));
 
     /**
@@ -80,68 +127,34 @@ app.controller('MainController', ['$scope', function($scope) {
     _timer.onElapsed.addListener(() => {
         if (_lyrics.hasNext()) {
             _lyrics.moveNext();
-            _updateLyric(_lyrics.getCurrentLyric());
+            _setLyric(_lyrics.getCurrentLyric());
         }
     });
-
-
-    /**
-     * キーが押されたとき
-     * @param event キーボードイベント
-     */
-    $scope.onKeyPress = function(event: JQueryKeyEventObject): void {
-        if (_state === GameState.READY && event.which == 0x20) {
-            _startGame();
-            _state = GameState.PLAY;
-        }
-        else if(_state === GameState.PLAY) {
-            // answer
-            _typing.type(String.fromCharCode(event.which));
-        }
-    }
 
     /**
      * ゲーム開始する
      */
     var _startGame = function(): void {
-        _updateLyric(_lyrics.getCurrentLyric());
+        _setLyric(_lyrics.getCurrentLyric());
         _totalProgressBar.startAnimation(100, _lyrics.getTotalDuration());
     }
 
     /**
      * 歌詞を更新する
      */
-    var _updateLyric = function(newLyric: utype.Lyric): void {
+    var _setLyric = function(newLyric: utype.Lyric): void {
         // 問題文登録
         _typing.registerSubject(newLyric.kanaLyric);
         // タイマー開始
         _timer.start(newLyric.duration);
-        // プログレスバー開始
-        _intervalProgressBar.setPercentage(0);
-        _intervalProgressBar.startAnimation(100, newLyric.duration);
-        // 歌詞表示更新
-        _showLyric();
-    }
-
-    /**
-     * 現在の歌詞（問題文）の状態を表示する
-     */
-    var _showLyric = function(): void {
-        $scope.$apply(function() {
-            $scope.lyric = {
-                kana: {
-                    solved: _typing.getSolvedKana(),
-                    unsolved: _typing.getUnsolvedKana()
-                },
-                roma: {
-                    solved: _typing.getSolvedRoma().toUpperCase(),
-                    unsolved: _typing.getUnsolvedRoma().toUpperCase()
-                },
-                original: _lyrics.getCurrentLyric().originalLyric
-            };
-        });
+        // 表示を更新
+        $scope.setLyric(newLyric);
     }
 }]);
+
+/**
+ * keyPressイベントを受け取るためのディレクティブ
+ */
 app.directive('ngKeypress', function() {
     return {
         restrict: 'A',

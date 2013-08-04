@@ -20,38 +20,18 @@ declare module utype {
     }
 
     /**
-     * タイピングゲームでプレイ中に更新される情報
+     * ゲームの成績
      */
-    export interface TypingInfo {
+    export interface Score {
         /**
-         * 打ち終わったひらがな文
+         * 点数
          */
-        solvedKana: string;
+        point: number;
 
         /**
-         * 打ち終わってないひらがな文
-         */
-        unsolvedKana: string;
-
-        /**
-         * 打ち終わったローマ字文
-         */
-        solvedRoma: string;
-
-        /**
-         * 打ち終わってないローマ字文
-         */
-        unsolvedRoma: string;
-
-        /**
-         * ミスタイプ数
+         * ミス回数
          */
         missCount: number;
-
-        /**
-         * スコア
-         */
-        score: number;
     }
 
     /**
