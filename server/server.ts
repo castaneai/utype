@@ -5,7 +5,13 @@ var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
 io.sockets.on('connection', function(socket) {
-    socket.emit('news', {hello: 'world!'});
+    socket.on('start', function(data) {
+        socket.broadcast.emit('start', data);
+    });
+
+    socket.on('type', function(data) {
+        socket.broadcast.emit('type', data);
+    });
 });
 
 exports = module.exports = server;

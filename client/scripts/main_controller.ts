@@ -6,6 +6,8 @@
 /// <reference path="utype/lyric_set.ts" />
 /// <reference path="utype/progress_view.ts" />
 
+declare var io: any;
+
 // テスト用歌詞データ用意
 var testLyrics = [
     {duration: 1240, originalLyric: '～間奏～', kanaLyric: ''},
@@ -34,10 +36,25 @@ enum GameState {
     READY,
     PLAY,
     PAUSE,
+    WATCH
 };
 
 var app = angular.module('utype', []);
 app.controller('MainController', ['$scope', function($scope) {
+
+    var url = location.protocol + '//' + location.host;
+    var socket = io.connect(url);
+
+    socket.on('start', function(data) {
+        console.log('other client started a game');
+        _state = GameState.WATCH;
+        _startGame();
+    });
+
+    socket.on('type', function(data) {
+        console.log('other client typed succesfly.');
+        _onTypeSuccess();
+    });
 
     // Viewと連動する変数の初期値を設定
     $scope.title = 'UType!';
@@ -80,18 +97,12 @@ app.controller('MainController', ['$scope', function($scope) {
      */
     $scope.onKeyPress = function(event: JQueryKeyEventObject): void {
         if (_state === GameState.READY && event.which == 0x20) {
-            _startGame();
             _state = GameState.PLAY;
+            socket.emit('start');
+            _startGame();
         }
         else if(_state === GameState.PLAY) {
-            var typedChar = String.fromCharCode(event.which);
-            if (_typing.type(typedChar)) {
-                $scope.score.point += 100;
-            }
-            else {
-                $scope.score.missCount += 1;
-            }
-            $scope.updateLyricState();
+            _typeKey(event.which);
         }
     }
 
@@ -137,6 +148,31 @@ app.controller('MainController', ['$scope', function($scope) {
     var _startGame = function(): void {
         _setLyric(_lyrics.getCurrentLyric());
         _totalProgressBar.startAnimation(100, _lyrics.getTotalDuration());
+    }
+
+    /**
+     * キーをタイプする
+     */
+    var _typeKey = function(keyCode: number): void {
+        var typedChar = String.fromCharCode(keyCode);
+        if (_typing.type(typedChar)) {
+            socket.emit('type', {keyCode: keyCode});
+            _onTypeSuccess();
+        }
+        else {
+            console.log('miss!');
+            _onTypeMiss();
+        }
+    }
+
+    var _onTypeSuccess = function(): void {
+        $scope.score.point += 100;
+        $scope.updateLyricState();
+    }
+
+    var _onTypeMiss = function(): void {
+        $scope.score.missCount += 1;
+        $scope.updateLyricState();
     }
 
     /**

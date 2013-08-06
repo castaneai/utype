@@ -52,7 +52,8 @@ module.exports = (grunt) ->
     express:
       server:
         options:
-          port: 666
+          #hostname: '0.0.0.0'
+          port: 10800
           server: '<%= dirConfig.tmp %>/<%= dirConfig.server %>/server.js'
           bases: ['<%= dirConfig.client %>', '<%= dirConfig.tmp %>/<%= dirConfig.client %>']
           livereload: true
