@@ -14,11 +14,11 @@ html, body {
   background: url("../img/title.png") no-repeat;
   padding-left: 256px;
   height: 128px;
+}
 
-  h1 {
+.header h1 {
     font-size: 100px;
     line-height: 1;
-  }
 }
 
 .body {
@@ -31,10 +31,10 @@ html, body {
   border: 1px solid #333;
   height: 8px;
 
-  .bar {
+}
+.progress .bar {
     background-color: #333;
     height: 100%;
-  }
 }
 
 .solved {
@@ -45,21 +45,48 @@ html, body {
   font-weight: bold;
 }
 
-#lyric-original {
+.lyric-original {
   font-size: x-large;
 }
 
-#lyric-roma {
+.lyric-roma {
   font-size: x-large;
 }
 
-#video-player {
+.video-player {
   display: block;
   margin: 0 auto;
 }
 
-.info {
-  li {
+.info li {
     display: inline-block;
-  }
+}
+
+.player-status {
+	margin: 8px 0;
+}
+
+.player-info {
+	margin-right: 8px;
+	padding: 8px;
+	border: 1px solid #666;
+}
+
+.player-info,
+.lyric {
+	float: left;
+}
+
+.clearfix:before,
+.clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}
+
+.clearfix {
+	*zoom: 1;
 }

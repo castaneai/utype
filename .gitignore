@@ -1,10 +1,4 @@
-.*
-!.travis.yml
+.tmp/
 node_modules/
 client/bower_components/
-*.js
-*.js.map
-*.css
-# typing.jsのみjsファイルのまま残す
-!typing.js
-!*.conf.js
+.DS_Store

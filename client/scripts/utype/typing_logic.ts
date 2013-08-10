@@ -39,13 +39,26 @@ module utype {
             return this._typing.answer(char);
         }
 
+		/**
+		 * ひらがなの問題文を返す
+		 */
+		public getKanaSubject(): string {
+			return this._typing.getOriginalQuestion();
+		}
+
+		/**
+		 * ひらがなの問題文のうち既に打ち終わった数を返す
+		 */
+		public getKanaSolvedCount(): number {
+			return this._typing.getAbsoluteAnswered();
+		}
+
         /**
          * ひらがなの問題文の打ち終わった部分を返す
          */
         public getSolvedKana(): string {
             var kana = this._typing.getOriginalQuestion();
-            var solvedCount = this._typing.getAbsoluteAnswered();
-            return kana.substr(0, solvedCount);
+            return kana.substr(0, this.getKanaSolvedCount());
         }
 
         /**
@@ -53,8 +66,7 @@ module utype {
          */
         public getUnsolvedKana(): string {
             var kana = this._typing.getOriginalQuestion();
-            var solvedCount = this._typing.getAbsoluteAnswered();
-            return kana.substr(solvedCount);
+            return kana.substr(this.getKanaSolvedCount());
         }
 
         /**

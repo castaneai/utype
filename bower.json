@@ -8,8 +8,6 @@
   ],
   "dependencies": {
     "jquery": "~2.0.2",
-    "angular": "~1.0.7",
-    "angular-youtube": "*",
-    "angular-ui": "~0.4.0"
+    "angular": "~1.0.7"
   }
 }

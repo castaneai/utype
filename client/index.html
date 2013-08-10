@@ -17,15 +17,22 @@
     <script src="socket.io/socket.io.js"></script>
 
     <!-- utype -->
+		<script src="scripts/lyric_sample.js"></script>
     <script src="scripts/utype.js"></script>
 </head>
 <body ng-keypress="onKeyPress">
 
 <div class="container">
+
+		<!-- header -->
     <div class="header">
         <h1>{{ title }}</h1>
     </div>
+
+		<!-- body -->
     <div class="body">
+
+				<!-- video player -->
         <div id="video-player"></div>
 
         <!-- progress bar -->
@@ -36,23 +43,25 @@
             <div class="bar" style="width: 0%"></div>
         </div>
 
-        <div id="lyric-kana" class="lyric">
-            <span class="solved">{{ lyric.kana.solved }}</span><span class="unsolved">{{ lyric.kana.unsolved }}</span>
-        </div>
-        <div id="lyric-original" class="lyric">
-            <span>{{ lyric.original }}</span>
-        </div>
-        <div id="lyric-roma" class="lyric">
-            <span class="solved">{{ lyric.roma.solved }}</span><span class="unsolved">{{ lyric.roma.unsolved }}</span>
-        </div>
-
-        <!-- info area -->
-        <ul class="info">
-            <li>Score: {{ score.point }}</li>
-            <li>Miss: {{ score.missCount }}</li>
-        </ul>
-
+				<!-- player status -->
+				<div class="player-status clearfix" ng-repeat="player in players">
+					<div class="player-info">
+						<h1>{{ $index + 1 }}P</h1>
+						<button ng-show="gameStatus == 3" ng-click="joinGame($index)">Join</button>
+					</div>
+					<div class="lyric">
+						<div class="lyric-kana">
+							<span class="solved">{{ getPlayerSolvedKana($index) }}</span><span class="unsolved">{{ getPlayerUnsolvedKana($index) }}</span>
+						</div>
+						<div class="lyric-original">{{ lyric.originalLyric }}</div>
+						<div class="lyric-roma" ng-show="getMyPlayer() == players[$index]">
+							<span class="solved">{{ getSolvedRoma() }}</span><span class="unsolved">{{ getUnsolvedRoma() }}</span>
+						</div>
+					</div>
+				</div>
     </div>
+
+		<!-- footer -->
     <div class="footer"></div>
 </div>
 

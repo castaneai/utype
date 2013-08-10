@@ -18,7 +18,8 @@ module utype {
          */
         private _percentage: number;
 
-        constructor(progressElement: JQuery) {
+		constructor(progressElementSelector: string) {
+			var progressElement = jQuery(progressElementSelector);
             this._barElement = progressElement.find('.bar');
         }
 

@@ -1,154 +1,136 @@
 /// <reference path="../../d.ts/DefinitelyTyped/angularjs/angular.d.ts" />
-/// <reference path="../../d.ts/DefinitelyTyped/jquery/jquery.d.ts" />
 /// <reference path="utype/interface.d.ts" />
 /// <reference path="utype/typing_logic.ts" />
-/// <reference path="utype/timer.ts" />
-/// <reference path="utype/lyric_set.ts" />
 /// <reference path="utype/progress_view.ts" />
+/// <reference path="utype/lyric_switcher.ts" />
 
 declare var io: any;
+declare var testLyrics: utype.Lyric[];
 
-// テスト用歌詞データ用意
-var testLyrics = [
-    {duration: 1240, originalLyric: '～間奏～', kanaLyric: ''},
-    {duration: 4855, originalLyric: '真っ直ぐな想いがみんなを結ぶ', kanaLyric: 'まっすぐなおもいがみんなをむすぶ'},
-    {duration: 4873, originalLyric: '本気でも不器用ぶつかり合うこころ', kanaLyric: 'ほんきでもぶきようぶつかりあうこころ'},
-    {duration: 4892, originalLyric: 'それでも見たいよ大きな夢は', kanaLyric: 'それでもみたいよおおきなゆめは'},
-    {duration: 4467, originalLyric: 'ここにあるよ始まったばかり', kanaLyric: 'ここにあるよはじまったばかり'},
-    {duration: 1108, originalLyric: '(わかってる)', kanaLyric: 'わかってる'},
-    {duration: 3821, originalLyric: '楽しいだけじゃない試されるだろう', kanaLyric: 'たのしいだけじゃないためされるだろう'},
-    {duration: 1108, originalLyric: '(わかってる)', kanaLyric: 'わかってる'},
-    {duration: 3692, originalLyric: 'だってその苦しさもミライ', kanaLyric: 'だってそのくるしさもみらい'},
-    {duration: 1163, originalLyric: '(行くんだよ)', kanaLyric: 'いくんだよ'},
-    {duration: 3696, originalLyric: '集まったら強い自分になってくよ', kanaLyric: 'あつまったらつよいじぶんになってくよ'},
-    {duration: 4633, originalLyric: '(きっとね)変わり続けて(We\'ll be star!)', kanaLyric: 'きっとねかわりつづけてWe\'ll be star'},
-    {duration: 5169, originalLyric: 'それぞれが好きなことで頑張れるなら', kanaLyric: 'それぞれがすきなことでがんばれるなら'},
-    {duration: 4652, originalLyric: '新しい(場所が)ゴールだね', kanaLyric: 'あたらしいばしょがごーるだね'},
-    {duration: 5076, originalLyric: 'それぞれの好きなことを信じていれば', kanaLyric: 'それぞれのすきなことをしんじていれば'},
-    {duration: 4929, originalLyric: 'ときめきを(抱いて)進めるだろう', kanaLyric: 'ときめきをだいてすすめるだろう'},
-    {duration: 5575, originalLyric: '(恐がる癖は捨てちゃえ)とびきりの笑顔で', kanaLyric: 'こわがるくせはすてちゃえとびきりのえがおで'},
-    {duration: 5519, originalLyric: '(跳んで跳んで高く)僕らは今のなかで', kanaLyric: 'とんでとんでたかくぼくらはいまのなかで'},
-    {duration: 3443, originalLyric: '', kanaLyric: ''},
-    {duration: 4292, originalLyric: '輝きを待ってた', kanaLyric: 'かがやきをまってた'}
-];
-
-enum GameState {
+enum GameStatus {
     READY,
     PLAY,
     PAUSE,
     WATCH
 };
 
-var app = angular.module('utype', []);
-app.controller('MainController', ['$scope', function($scope) {
+var app = angular.module('utype', ['socket.io']);
+app.controller('MainController', ['$scope', 'socket', function($scope, socket) {
 
-    var url = location.protocol + '//' + location.host;
-    var socket = io.connect(url);
+	// --- $scope ---
+	$scope.lyric = null;
+	$scope.players = [new utype.Player(), new utype.Player()];
+	$scope.myPlayerIndex = -1;
+	$scope.gameStatus = GameStatus.WATCH;
 
-    socket.on('start', function(data) {
-        console.log('other client started a game');
-        _state = GameState.WATCH;
-        _startGame();
-    });
+	$scope.getMyPlayer = (): utype.Player => {
+		return $scope.players[$scope.myPlayerIndex];
+	}
 
-    socket.on('type', function(data) {
-        console.log('other client typed succesfly.');
-        _onTypeSuccess();
-    });
+	$scope.changeStatus = (newStatus: GameStatus) => {
+		$scope.gameStatus = newStatus;
+	}
 
-    // Viewと連動する変数の初期値を設定
-    $scope.title = 'UType!';
-    $scope.score = {
-        point: 0,
-        missCount: 0
-    };
+	/**
+	 * ゲームに参加する
+	 */
+	$scope.joinGame = (playerIndex: number) => {
+		socket.emit('join', {playerIndex: playerIndex});
+		$scope.changeStatus(GameStatus.READY);
+		$scope.myPlayerIndex = playerIndex;
+	}
 
-    // Viewと連動する関数を設定
+	$scope.startGame = () => {
+		socket.emit('start');
+		_startGame();
+	}
+
     /**
      * 歌詞を表示する
      */
     $scope.setLyric = (lyric: utype.Lyric) => {
+		_typing.registerSubject(lyric.kanaLyric);
         _intervalProgressBar.setPercentage(0);
         _intervalProgressBar.startAnimation(100, lyric.duration);
-        $scope.lyric = {};
-        $scope.lyric.originalLyric = lyric.originalLyric;
-        $scope.updateLyricState();
-    }
-
-    /**
-     * 打ち終わった部分とまだの部分の色分け表示を更新する
-     * ↑のsetLyricは歌詞が始まったときのみ呼び出されるがこっちは
-     * キー入力があるたびに呼び出される
-     */
-    $scope.updateLyricState = () => {
-        $scope.lyric.kana = {
-            solved: _typing.getSolvedKana(),
-            unsolved: _typing.getUnsolvedKana()
-        };
-        $scope.lyric.roma = {
-            solved: _typing.getSolvedRoma(),
-            unsolved: _typing.getUnsolvedRoma()
-        };
-        $scope.$apply();
+		$scope.players.forEach((player) => {
+			player.intervalScore.kanaSolvedCount = 0;
+		});
+        $scope.lyric = lyric;
+		$scope.$apply();
     }
 
     /**
      * キーが押されたとき
      */
-    $scope.onKeyPress = function(event: JQueryKeyEventObject): void {
-        if (_state === GameState.READY && event.which == 0x20) {
-            _state = GameState.PLAY;
-            socket.emit('start');
-            _startGame();
+	$scope.onKeyPress = (keyEvent) => {
+        if ($scope.gameStatus === GameStatus.READY && keyEvent.which == 0x20) {
+			$scope.startGame();
         }
-        else if(_state === GameState.PLAY) {
-            _typeKey(event.which);
+        else if($scope.gameStatus === GameStatus.PLAY) {
+            _typeKey(keyEvent.which);
+			socket.emit('type', {
+				playerIndex: $scope.myPlayerIndex,
+				// TODO: playerという名前は不適？ playerStatus or playerScoreにするべきか
+				player: $scope.getMyPlayer()
+			});
         }
     }
 
-    /**
-     * 現在のゲームの状態
-     */
-    var _state: GameState = GameState.READY;
+	$scope.getPlayerSolvedKana = (playerIndex: number): string => {
+		var player = $scope.players[playerIndex];
+		return _typing.getKanaSubject().substr(0, player.intervalScore.kanaSolvedCount); 
+	}
 
-    /**
-     * タイピングのロジック
-     */
-    var _typing: utype.TypingLogic = new utype.TypingLogic();
+	$scope.getPlayerUnsolvedKana = (playerIndex: number): string => {
+		var player = $scope.players[playerIndex];
+		return _typing.getKanaSubject().substr(player.intervalScore.kanaSolvedCount);
+	}
 
-    /**
-     * 歌詞リスト
-     */
-    var _lyrics: utype.LyricSet = new utype.LyricSet(testLyrics);
+	$scope.getSolvedRoma = (): string => {
+		return _typing.getSolvedRoma();
+	}
+
+	$scope.getUnsolvedRoma = (): string => {
+		return _typing.getUnsolvedRoma();
+	}
+
+	// --- socket ---
+	socket.on('start', (data) => {
+		console.log('other client started game.');
+		_startGame();
+	});
+
+	socket.on('type', (data) => {
+		$scope.players[data.playerIndex] = data.player;
+		$scope.$apply();
+	});
+
+	// --- private ---
+	var _typing = new utype.TypingLogic();
+
+	var _lyricSwitcher = new utype.LyricSwitcher(testLyrics);
+
+	var _startGame = () => {
+		$scope.changeStatus(GameStatus.PLAY);
+		_lyricSwitcher.onSwitch.addListener((lyric: utype.Lyric) => {
+			$scope.setLyric(lyric);
+		});
+		_lyricSwitcher.onFinish.addListener(() => {
+			// TODO: すべての歌詞が終了したとき
+		});
+		_lyricSwitcher.start();
+		_totalProgressBar.startAnimation(100, _lyricSwitcher.getTotalDuration());
+	}
 
     /**
      * 曲全体の進行度を表すプログレスバー
      */
-    var _totalProgressBar = new utype.ProgressView(jQuery('#total-bar'));
+    var _totalProgressBar = new utype.ProgressView('#total-bar');
 
     /**
      * 現在の歌詞インターバルの進行度を表すプログレスバー
      */
-    var _intervalProgressBar = new utype.ProgressView(jQuery('#interval-bar'));
-
-    /**
-     * 歌詞の切り替えに使うタイマー
-     */
-    var _timer: utype.Timer = new utype.Timer();
-    _timer.onElapsed.addListener(() => {
-        if (_lyrics.hasNext()) {
-            _lyrics.moveNext();
-            _setLyric(_lyrics.getCurrentLyric());
-        }
-    });
-
-    /**
-     * ゲーム開始する
-     */
-    var _startGame = function(): void {
-        _setLyric(_lyrics.getCurrentLyric());
-        _totalProgressBar.startAnimation(100, _lyrics.getTotalDuration());
-    }
+    var _intervalProgressBar = new utype.ProgressView('#interval-bar');
 
     /**
      * キーをタイプする
@@ -156,35 +138,26 @@ app.controller('MainController', ['$scope', function($scope) {
     var _typeKey = function(keyCode: number): void {
         var typedChar = String.fromCharCode(keyCode);
         if (_typing.type(typedChar)) {
-            socket.emit('type', {keyCode: keyCode});
             _onTypeSuccess();
         }
         else {
-            console.log('miss!');
             _onTypeMiss();
         }
     }
 
     var _onTypeSuccess = function(): void {
-        $scope.score.point += 100;
-        $scope.updateLyricState();
+		// TODO: スコア点数計算式
+        $scope.getMyPlayer().score.point += 100;
+		$scope.getMyPlayer().intervalScore = {
+			kanaSolvedCount: _typing.getKanaSolvedCount()
+		};
+		$scope.$apply();
     }
 
     var _onTypeMiss = function(): void {
-        $scope.score.missCount += 1;
-        $scope.updateLyricState();
-    }
-
-    /**
-     * 歌詞を更新する
-     */
-    var _setLyric = function(newLyric: utype.Lyric): void {
-        // 問題文登録
-        _typing.registerSubject(newLyric.kanaLyric);
-        // タイマー開始
-        _timer.start(newLyric.duration);
-        // 表示を更新
-        $scope.setLyric(newLyric);
+		// TODO: ミス計算
+        $scope.getMyPlayer().score.missCount += 1;
+		$scope.$apply();
     }
 }]);
 

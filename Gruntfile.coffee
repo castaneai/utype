@@ -39,7 +39,7 @@ module.exports = (grunt) ->
       options:
         livereload: true
       typescript_client:
-        files: '<%= dirConfig.client %>/{,*/}*.ts'
+        files: '<%= dirConfig.client %>/scripts/{,*/}*.ts'
         tasks: 'typescript:client'
       typescript_server:
         files: '<%= dirConfig.server %>/{,*/}*.ts'
@@ -61,5 +61,5 @@ module.exports = (grunt) ->
           # serverreload: true
 
   # Gruntタスクの登録 grunt compile のようにして呼び出す
-  grunt.registerTask('compile', ['typescript'])
+  grunt.registerTask('compile', ['typescript:client', 'typescript:server'])
   grunt.registerTask('server', ['compile', 'express', 'open', 'watch'])
