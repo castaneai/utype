@@ -37,12 +37,24 @@ html, body {
     height: 100%;
 }
 
-.solved {
-  color: steelblue;
+
+.player-info,
+.lyric {
+    display: inline-block;
+}
+
+.player-info {
+	margin-right: 8px;
+	padding: 8px;
+}
+
+.player-status {
+	margin: 8px 0;
 }
 
 .lyric {
-  font-weight: bold;
+    font-weight: bold;
+    width: 90%;
 }
 
 .lyric-original {
@@ -53,40 +65,6 @@ html, body {
   font-size: x-large;
 }
 
-.video-player {
-  display: block;
-  margin: 0 auto;
-}
-
-.info li {
-    display: inline-block;
-}
-
-.player-status {
-	margin: 8px 0;
-}
-
-.player-info {
-	margin-right: 8px;
-	padding: 8px;
-	border: 1px solid #666;
-}
-
-.player-info,
-.lyric {
-	float: left;
-}
-
-.clearfix:before,
-.clearfix:after {
-	content: " ";
-	display: table;
-}
-
-.clearfix:after {
-	clear: both;
-}
-
-.clearfix {
-	*zoom: 1;
+.solved {
+  color: #ddd;
 }

@@ -5,34 +5,34 @@
     <title>utype</title>
 
     <!-- styles -->
-    <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.9.0/build/reset/reset-min.css">
+    <link rel="stylesheet" type="text/css" href="styles/reset.css" />
     <link rel="stylesheet" type="text/css" href="styles/index.css"/>
 
     <!-- vendor libs -->
     <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="scripts/typing.js"></script>
-    
+
     <!-- server -->
     <script src="socket.io/socket.io.js"></script>
 
     <!-- utype -->
-		<script src="scripts/lyric_sample.js"></script>
+    <script src="scripts/lyric_sample.js"></script>
     <script src="scripts/utype.js"></script>
 </head>
 <body ng-keypress="onKeyPress">
 
 <div class="container">
 
-		<!-- header -->
+    <!-- header -->
     <div class="header">
-        <h1>{{ title }}</h1>
+        <h1>UType!</h1>
     </div>
 
-		<!-- body -->
+    <!-- body -->
     <div class="body">
 
-				<!-- video player -->
+        <!-- video player -->
         <div id="video-player"></div>
 
         <!-- progress bar -->
@@ -43,25 +43,26 @@
             <div class="bar" style="width: 0%"></div>
         </div>
 
-				<!-- player status -->
-				<div class="player-status clearfix" ng-repeat="player in players">
-					<div class="player-info">
-						<h1>{{ $index + 1 }}P</h1>
-						<button ng-show="gameStatus == 3" ng-click="joinGame($index)">Join</button>
-					</div>
-					<div class="lyric">
-						<div class="lyric-kana">
-							<span class="solved">{{ getPlayerSolvedKana($index) }}</span><span class="unsolved">{{ getPlayerUnsolvedKana($index) }}</span>
-						</div>
-						<div class="lyric-original">{{ lyric.originalLyric }}</div>
-						<div class="lyric-roma" ng-show="getMyPlayer() == players[$index]">
-							<span class="solved">{{ getSolvedRoma() }}</span><span class="unsolved">{{ getUnsolvedRoma() }}</span>
-						</div>
-					</div>
-				</div>
+        <!-- player status -->
+        <div class="player-status" ng-repeat="player in players">
+            <div class="player-info">
+                <h1>{{ $index + 1 }}P</h1>
+                <button ng-show="gameStatus == 3" ng-click="joinGame($index)">Join</button>
+            </div>
+            <div class="lyric">
+                <div class="lyric-kana">
+                    <span class="solved">{{ getPlayerSolvedKana($index) }}</span><span class="unsolved">{{ getPlayerUnsolvedKana($index) }}</span>
+                </div>
+                <div class="lyric-original">{{ lyric.originalLyric }}</div>
+                <div class="lyric-roma" ng-show="getMyPlayer() == players[$index]">
+                    <span class="solved">{{ getSolvedRoma() }}</span><span
+                        class="unsolved">{{ getUnsolvedRoma() }}</span>
+                </div>
+            </div>
+        </div>
     </div>
 
-		<!-- footer -->
+    <!-- footer -->
     <div class="footer"></div>
 </div>
 

@@ -3,6 +3,7 @@
 /// <reference path="utype/typing_logic.ts" />
 /// <reference path="utype/progress_view.ts" />
 /// <reference path="utype/lyric_switcher.ts" />
+/// <reference path="utype/player.ts" />
 
 declare var io: any;
 declare var testLyrics: utype.Lyric[];
