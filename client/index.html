@@ -1,69 +1,90 @@
 <!DOCTYPE html>
 <html ng-app="utype" ng-controller="MainController">
 <head>
-    <meta charset="utf-8"/>
-    <title>utype</title>
+  <meta charset="utf-8"/>
+  <title>utype</title>
 
-    <!-- styles -->
-    <link rel="stylesheet" type="text/css" href="styles/reset.css" />
-    <link rel="stylesheet" type="text/css" href="styles/index.css"/>
+  <!-- styles -->
+  <link rel="stylesheet" type="text/css" href="styles/reset.css"/>
+  <link rel="stylesheet" type="text/css" href="styles/index.css"/>
 
-    <!-- vendor libs -->
-    <script src="bower_components/jquery/jquery.js"></script>
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="scripts/typing.js"></script>
+  <!-- vendor libs -->
+  <script src="bower_components/jquery/jquery.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="scripts/typing.js"></script>
 
-    <!-- server -->
-    <script src="socket.io/socket.io.js"></script>
+  <!-- server -->
+  <script src="socket.io/socket.io.js"></script>
 
-    <!-- utype -->
-    <script src="scripts/lyric_sample.js"></script>
-    <script src="scripts/utype.js"></script>
+  <!-- utype -->
+  <script src="scripts/lyric_sample.js"></script>
+  <script src="scripts/utype.js"></script>
 </head>
 <body ng-keypress="onKeyPress">
 
 <div class="container">
 
-    <!-- header -->
-    <div class="header">
-        <h1>UType!</h1>
+  <!-- header -->
+  <div class="header">
+    <h1>UType!</h1>
+  </div>
+
+  <!-- body -->
+  <div class="body">
+
+    <!-- video player -->
+    <div id="video-player"></div>
+
+    <!-- progress bar -->
+    <div id="total-bar" class="progress">
+      <div class="bar" style="width: 0%;"></div>
+    </div>
+    <div id="interval-bar" class="progress">
+      <div class="bar" style="width: 0%"></div>
     </div>
 
-    <!-- body -->
-    <div class="body">
+    <!-- entry area -->
+    <div class="entry">
 
-        <!-- video player -->
-        <div id="video-player"></div>
+      <h1 ng-show="isWatchStatus()">課題曲：僕らは今の中で　エントリー受付中</h1>
 
-        <!-- progress bar -->
-        <div id="total-bar" class="progress">
-            <div class="bar" style="width: 0%;"></div>
-        </div>
-        <div id="interval-bar" class="progress">
-            <div class="bar" style="width: 0%"></div>
-        </div>
-
-        <!-- player status -->
-        <div class="player-status" ng-repeat="player in players">
-            <div class="player-info">
-                <h1>{{ $index + 1 }}P</h1>
-                <button ng-show="gameStatus == 3" ng-click="joinGame($index)">Join</button>
-            </div>
-            <div class="lyric">
-                <div class="lyric-kana">
-                    <span class="solved">{{ getPlayerSolvedKana($index) }}</span><span class="unsolved">{{ getPlayerUnsolvedKana($index) }}</span>
-                </div>
-                <div class="lyric-original">{{ lyric.originalLyric }}</div>
-                <div class="lyric-roma" ng-show="getMyPlayer() == players[$index]">
-                    <span class="solved">{{ getSolvedRoma() }}</span><span
-                        class="unsolved">{{ getUnsolvedRoma() }}</span>
-                </div>
-            </div>
-        </div>
+      <div class="entry-form" ng-show="isWatchStatus()">
+        <span>アイコン:</span>
+        <select ng-model="entryForm.iconId">
+          <option value="0">折部やすな</option>
+          <option value="1">ソーニャ</option>
+          <option value="2">呉織あぎり</option>
+          <option value="3">没キャラ</option>
+        </select>
+        <input type="text" placeholder="名前" ng-model="entryForm.userName" />
+        <button ng-click="entryGame()">エントリー</button>
+      </div>
     </div>
 
-    <!-- footer -->
-    <div class="footer"></div>
+    <!-- entry clients -->
+    <div class="entry-client" ng-repeat="(clientId, info) in entryClients">
+      <div class="client-info">
+        <div class="client-icon">
+          <img ng-src="img/icons/{{ info.iconId }}.png" width="80" height="80" />
+        </div>
+        <div class="client-name">{{ info.userName }}</div>
+        <div class="client-score-point">{{ getClientScore(clientId).totalScore.point || 0 | number }}Pt</div>
+      </div>
+
+      <div class="lyric">
+        <div class="lyric-kana">
+          <span class="solved">{{ getClientSolvedKana(clientId) }}</span><span class="unsolved">{{ getClientUnsolvedKana(clientId) }}</span>
+        </div>
+        <div class="lyric-original">{{ lyric.originalLyric }}</div>
+        <div class="lyric-roma">
+          <span class="solved">{{ getClientSolvedRoma(clientId) }}</span><span class="unsolved">{{ getClientUnsolvedRoma(clientId) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div class="footer"></div>
 </div>
 
 </body>

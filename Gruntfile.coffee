@@ -50,7 +50,7 @@ module.exports = (grunt) ->
       server:
         options:
           # 外部に公開したい場合 #を外して0.0.0.0をホストにする
-          #hostname: '0.0.0.0'
+          hostname: '0.0.0.0'
           port: 10800
           server: '<%= dirConfig.tmp %>/<%= dirConfig.server %>/server.js'
           bases: ['<%= dirConfig.client %>', '<%= dirConfig.tmp %>/<%= dirConfig.client %>']

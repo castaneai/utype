@@ -72,7 +72,7 @@ interface EventEmitter {
     on(event: string, listener: Function);
     once(event: string, listener: Function): void;
     removeListener(event: string, listener: Function): void;
-    removeAllListener(event: string): void;
+    removeAllListeners(event?: string): void;
     setMaxListeners(n: number): void;
     listeners(event: string): { Function; }[];
     emit(event: string, arg1?: any, arg2?: any): void;
@@ -213,7 +213,7 @@ declare module "events" {
         on(event: string, listener: Function): any;
         once(event: string, listener: Function): void;
         removeListener(event: string, listener: Function): void;
-        removeAllListener(event: string): void;
+        removeAllListeners(event?: string): void;
         setMaxListeners(n: number): void;
         listeners(event: string): { Function; }[];
         emit(event: string, arg1?: any, arg2?: any): void;
@@ -224,7 +224,7 @@ declare module "events" {
         on(event: string, listener: Function): any;
         once(event: string, listener: Function): void;
         removeListener(event: string, listener: Function): void;
-        removeAllListener(event: string): void;
+        removeAllListeners(event?: string): void;
         setMaxListeners(n: number): void;
         listeners(event: string): { Function; }[];
         emit(event: string, arg1?: any, arg2?: any): void;
@@ -333,7 +333,7 @@ declare module "cluster" {
     export function on(event: string, listener: Function): any;
     export function once(event: string, listener: Function): void;
     export function removeListener(event: string, listener: Function): void;
-    export function removeAllListener(event: string): void;
+    export function removeAllListeners(event?: string): void;
     export function setMaxListeners(n: number): void;
     export function listeners(event: string): { Function; }[];
     export function emit(event: string, arg1?: any, arg2?: any): void;
@@ -808,6 +808,7 @@ declare module "fs" {
 declare module "path" {
     export function normalize(p: string): string;
     export function join(...paths: any[]): string;
+    export function resolve(to: string);
     export function resolve(from: string, to: string): string;
     export function resolve(from: string, from2: string, to: string): string;
     export function resolve(from: string, from2: string, from3: string, to: string): string;
@@ -1019,8 +1020,8 @@ declare module "util" {
 }
 
 declare module "assert" {
-    export function internal (booleanValue: boolean, message?: string): void;
-    export module internal {
+	function internal (booleanValue: boolean, message?: string): void;
+	module internal {
         export function fail(actual: any, expected: any, message: string, operator: string): void;
         export function assert(value: any, message: string): void;
         export function ok(value: any, message?: string): void;
@@ -1034,6 +1035,8 @@ declare module "assert" {
         export function doesNotThrow(block: any, error?: any, messsage?: string): void;
         export function ifError(value: any): void;
     }
+	
+	export = internal;
 }
 
 declare module "tty" {

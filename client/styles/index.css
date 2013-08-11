@@ -37,28 +37,42 @@ html, body {
     height: 100%;
 }
 
+.entry {
+    text-align: center;
+}
 
-.player-info,
+.entry h1 {
+    font-size: xx-large;
+    text-align: center;
+}
+
+.client-info,
 .lyric {
     display: inline-block;
+    vertical-align: middle;
 }
 
-.player-info {
+.client-info {
+    width: 11%;
 	margin-right: 8px;
-	padding: 8px;
 }
 
-.player-status {
-	margin: 8px 0;
+.client-name,
+.client-score-point {
+    margin-bottom: 2px;
+    font-size: small;
+    padding: 4px;
+    background: #333;
+    color: #fefefe;
 }
 
 .lyric {
     font-weight: bold;
-    width: 90%;
+    width: 80%;
 }
 
 .lyric-original {
-  font-size: x-large;
+  font-size: xx-large;
 }
 
 .lyric-roma {

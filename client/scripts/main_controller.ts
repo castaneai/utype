@@ -1,11 +1,12 @@
 /// <reference path="../../d.ts/DefinitelyTyped/angularjs/angular.d.ts" />
+/// <reference path="../../d.ts/DefinitelyTyped/socket.io/socket.io.d.ts" />
+/// <reference path="../../d.ts/network_data.d.ts" />
 /// <reference path="utype/interface.d.ts" />
 /// <reference path="utype/typing_logic.ts" />
 /// <reference path="utype/progress_view.ts" />
 /// <reference path="utype/lyric_switcher.ts" />
 /// <reference path="utype/player.ts" />
 
-declare var io: any;
 declare var testLyrics: utype.Lyric[];
 
 enum GameStatus {
@@ -16,29 +17,38 @@ enum GameStatus {
 };
 
 var app = angular.module('utype', ['socket.io']);
-app.controller('MainController', ['$scope', 'socket', function($scope, socket) {
+app.controller('MainController', ['$scope', 'socket', function($scope, socket: Socket) {
 
 	// --- $scope ---
+	$scope.entryForm = {
+		userName: '',
+		iconId: 0
+	};
 	$scope.lyric = null;
-	$scope.players = [new utype.Player(), new utype.Player()];
-	$scope.myPlayerIndex = -1;
 	$scope.gameStatus = GameStatus.WATCH;
+	$scope.entryClients = {};
+	$scope.myClientId = '!!! invalid client id';
+	$scope.clientScores = {};
 
-	$scope.getMyPlayer = (): utype.Player => {
-		return $scope.players[$scope.myPlayerIndex];
+	$scope.getClientScore = (clientId: string): ClientScore => {
+		return $scope.clientScores[clientId];
+	}
+
+	$scope.getMyClientScore = (): ClientScore => {
+		return $scope.getClientScore($scope.myClientId);
+	}
+
+	$scope.isWatchStatus = (): boolean => {
+		return $scope.gameStatus === GameStatus.WATCH;
 	}
 
 	$scope.changeStatus = (newStatus: GameStatus) => {
 		$scope.gameStatus = newStatus;
 	}
 
-	/**
-	 * ゲームに参加する
-	 */
-	$scope.joinGame = (playerIndex: number) => {
-		socket.emit('join', {playerIndex: playerIndex});
+	$scope.entryGame = () => {
+		socket.emit('entry', $scope.entryForm);
 		$scope.changeStatus(GameStatus.READY);
-		$scope.myPlayerIndex = playerIndex;
 	}
 
 	$scope.startGame = () => {
@@ -53,9 +63,13 @@ app.controller('MainController', ['$scope', 'socket', function($scope, socket) {
 		_typing.registerSubject(lyric.kanaLyric);
         _intervalProgressBar.setPercentage(0);
         _intervalProgressBar.startAnimation(100, lyric.duration);
-		$scope.players.forEach((player) => {
-			player.intervalScore.kanaSolvedCount = 0;
-		});
+	    for (var id in $scope.clientScores) {
+		    $scope.clientScores[id].intervalScore = {
+			    kanaSolvedCount: 0,
+			    solvedRoma: '',
+			    unsolvedRoma: _typing.getUnsolvedRoma()
+		    };
+		}
         $scope.lyric = lyric;
 		$scope.$apply();
     }
@@ -69,40 +83,61 @@ app.controller('MainController', ['$scope', 'socket', function($scope, socket) {
         }
         else if($scope.gameStatus === GameStatus.PLAY) {
             _typeKey(keyEvent.which);
-			socket.emit('type', {
-				playerIndex: $scope.myPlayerIndex,
-				// TODO: playerという名前は不適？ playerStatus or playerScoreにするべきか
-				player: $scope.getMyPlayer()
-			});
+			socket.emit('type', $scope.getMyClientScore());
         }
     }
 
-	$scope.getPlayerSolvedKana = (playerIndex: number): string => {
-		var player = $scope.players[playerIndex];
-		return _typing.getKanaSubject().substr(0, player.intervalScore.kanaSolvedCount); 
+	$scope.getClientSolvedKana = (clientId: string): string => {
+		var score = $scope.getClientScore(clientId);
+		var result = _typing.getKanaSubject().substr(0, score.intervalScore.kanaSolvedCount);
+		return _typing.getKanaSubject().substr(0, score.intervalScore.kanaSolvedCount);
 	}
 
-	$scope.getPlayerUnsolvedKana = (playerIndex: number): string => {
-		var player = $scope.players[playerIndex];
-		return _typing.getKanaSubject().substr(player.intervalScore.kanaSolvedCount);
+	$scope.getClientUnsolvedKana = (clientId: string): string => {
+		var score = $scope.getClientScore(clientId);
+		return _typing.getKanaSubject().substr(score.intervalScore.kanaSolvedCount);
 	}
 
-	$scope.getSolvedRoma = (): string => {
-		return _typing.getSolvedRoma();
+	$scope.getClientSolvedRoma = (clientId: string): string => {
+		return $scope.getClientScore(clientId).intervalScore.solvedRoma;
 	}
 
-	$scope.getUnsolvedRoma = (): string => {
-		return _typing.getUnsolvedRoma();
+	$scope.getClientUnsolvedRoma = (clientId: string): string => {
+		return $scope.getClientScore(clientId).intervalScore.unsolvedRoma;
 	}
 
 	// --- socket ---
+
+	socket.on('entry.accept', (data) => {
+		$scope.myClientId = data.clientId;
+	});
+
+	socket.on('entry.update', (data: ClientInfoDict) => {
+		$scope.entryClients = data;
+		// TODO: entryClientsとclientScores2つのリストが必要なのは面倒では？
+		for (var id in $scope.entryClients) {
+			$scope.clientScores[id] = {
+				intervalScore: {
+					kanaSolvedCount: 0,
+					solvedRoma: '',
+					unsolvedRoma: ''
+				},
+				totalScore: {
+					point: 0,
+					missCount: 0
+				}
+			};
+		}
+		$scope.$apply();
+	});
+
 	socket.on('start', (data) => {
 		console.log('other client started game.');
 		_startGame();
 	});
 
 	socket.on('type', (data) => {
-		$scope.players[data.playerIndex] = data.player;
+		$scope.clientScores[data.clientId] = data.clientScore;
 		$scope.$apply();
 	});
 
@@ -148,16 +183,18 @@ app.controller('MainController', ['$scope', 'socket', function($scope, socket) {
 
     var _onTypeSuccess = function(): void {
 		// TODO: スコア点数計算式
-        $scope.getMyPlayer().score.point += 100;
-		$scope.getMyPlayer().intervalScore = {
-			kanaSolvedCount: _typing.getKanaSolvedCount()
+	    $scope.getMyClientScore().totalScore.point += 100;
+	    $scope.getMyClientScore().intervalScore = {
+		    kanaSolvedCount: _typing.getKanaSolvedCount(),
+		    solvedRoma: _typing.getSolvedRoma(),
+		    unsolvedRoma: _typing.getUnsolvedRoma()
 		};
 		$scope.$apply();
     }
 
     var _onTypeMiss = function(): void {
 		// TODO: ミス計算
-        $scope.getMyPlayer().score.missCount += 1;
+	    $scope.getMyClientScore().totalScore.missCount += 1;
 		$scope.$apply();
     }
 }]);
