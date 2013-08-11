@@ -1,19 +1,18 @@
 /// <reference path="../../d.ts/DefinitelyTyped/angularjs/angular.d.ts" />
 /// <reference path="../../d.ts/DefinitelyTyped/socket.io/socket.io.d.ts" />
-/// <reference path="../../d.ts/network_data.d.ts" />
+/// <reference path="../../d.ts/utype.d.ts" />
 /// <reference path="utype/interface.d.ts" />
 /// <reference path="utype/typing_logic.ts" />
 /// <reference path="utype/progress_view.ts" />
 /// <reference path="utype/lyric_switcher.ts" />
-/// <reference path="utype/player.ts" />
-
-declare var testLyrics: utype.Lyric[];
+/// <reference path="utype/tm_xml_parser.ts" />
 
 enum GameStatus {
     READY,
     PLAY,
     PAUSE,
-    WATCH
+    WATCH,
+	LOADING
 };
 
 var app = angular.module('utype', ['socket.io']);
@@ -25,7 +24,7 @@ app.controller('MainController', ['$scope', 'socket', function($scope, socket: S
 		iconId: 0
 	};
 	$scope.lyric = null;
-	$scope.gameStatus = GameStatus.WATCH;
+	$scope.gameStatus = GameStatus.LOADING;
 	$scope.entryClients = {};
 	$scope.myClientId = '!!! invalid client id';
 	$scope.clientScores = {};
@@ -144,9 +143,11 @@ app.controller('MainController', ['$scope', 'socket', function($scope, socket: S
 	// --- private ---
 	var _typing = new utype.TypingLogic();
 
-	var _lyricSwitcher = new utype.LyricSwitcher(testLyrics);
+	var _lyricSwitcher = null;
 
 	var _startGame = () => {
+		var videoElement = <HTMLMediaElement> document.getElementsByTagName('video')[0];
+		videoElement.play();
 		$scope.changeStatus(GameStatus.PLAY);
 		_lyricSwitcher.onSwitch.addListener((lyric: utype.Lyric) => {
 			$scope.setLyric(lyric);
@@ -197,6 +198,12 @@ app.controller('MainController', ['$scope', 'socket', function($scope, socket: S
 	    $scope.getMyClientScore().totalScore.missCount += 1;
 		$scope.$apply();
     }
+
+	// loading xml
+	utype.TmXmlParser.parse('xml/mondai_kaiketsu.xml', (lyrics: utype.Lyric[]) => {
+		_lyricSwitcher = new utype.LyricSwitcher(lyrics);
+		$scope.changeStatus(GameStatus.WATCH);
+	});
 }]);
 
 /**

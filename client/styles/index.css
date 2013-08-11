@@ -7,7 +7,7 @@ html, body {
 .container {
   margin: 0 auto;
   padding: 24px;
-  width: 800px;
+  width: 900px;
 }
 
 .header {
@@ -81,4 +81,9 @@ html, body {
 
 .solved {
   color: #ddd;
+}
+
+.video-player {
+    width: 800px;
+    margin: 0 auto;
 }

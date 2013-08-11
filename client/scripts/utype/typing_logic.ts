@@ -30,8 +30,8 @@ module utype {
 
         /**
          * 1文字タイプする
-         * 成功したら成功イベントが、
-         * 失敗したらミスタイプイベントが発生する
+         * 成功したらtrue
+         * 失敗したらfalseを返す
          * @param char タイプする文字
          */
         public type(char: string): boolean {

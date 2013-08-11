@@ -19,6 +19,12 @@ module utype {
                 var kanaLyrics = <any> $(data).find('word').map((i, elem) => jQuery(elem).text());
 
                 for (var i = 0; i < count; i++) {
+	                if (originalLyrics[i] === '@') {
+		                originalLyrics[i] = '';
+	                }
+	                if (kanaLyrics[i] === '@') {
+		                kanaLyrics[i] = '';
+	                }
                     lyrics.push({
                         duration: durations[i],
                         originalLyric: originalLyrics[i],

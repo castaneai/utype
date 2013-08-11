@@ -1,6 +1,6 @@
 /// <reference path="../d.ts/DefinitelyTyped/node/node.d.ts" />
 /// <reference path="../d.ts/DefinitelyTyped/socket.io/socket.io.d.ts" />
-/// <reference path="../d.ts/network_data.d.ts" />
+/// <reference path="../d.ts/utype.d.ts" />
 
 var app = require('express')();
 var server = require('http').createServer(app);
