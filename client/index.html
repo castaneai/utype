@@ -9,6 +9,7 @@
   <link rel="stylesheet" type="text/css" href="styles/index.css"/>
 
   <!-- vendor libs -->
+  <script src="bower_components/underscore/underscore.js"></script>
   <script src="bower_components/jquery/jquery.js"></script>
   <script src="bower_components/angular/angular.js"></script>
   <script src="scripts/typing.js"></script>
@@ -48,38 +49,51 @@
     <!-- entry area -->
     <div class="entry">
 
-      <h1 ng-show="isWatchStatus()">エントリー受付中!!</h1>
+      <h1 ng-show="game.isWatchStatus()">エントリー受付中!!</h1>
 
-      <div class="entry-form" ng-show="isWatchStatus()">
+      <div class="entry-form" ng-show="game.isWatchStatus()">
         <span>アイコン:</span>
         <select ng-model="entryForm.iconId">
-          <option value="0">折部やすな</option>
+          <option value="0" selected="selected">折部やすな</option>
           <option value="1">ソーニャ</option>
           <option value="2">呉織あぎり</option>
           <option value="3">没キャラ</option>
         </select>
         <input type="text" placeholder="名前" ng-model="entryForm.userName" />
-        <button ng-click="entryGame()">エントリー</button>
+        <button ng-click="game.entryGame(entryForm)">エントリー</button>
       </div>
     </div>
-
-    <!-- entry clients -->
-    <div class="entry-client" ng-repeat="(clientId, info) in entryClients">
+      
+    <!-- my entry client -->
+    <div class="entry-client" ng-show="game.getMyClient() == true">
       <div class="client-info">
-        <div class="client-icon">
-          <img ng-src="img/icons/{{ info.iconId }}.png" width="80" height="80" />
-        </div>
-        <div class="client-name">{{ info.userName }}</div>
-        <div class="client-score-point">{{ getClientScore(clientId).totalScore.point || 0 | number }}Pt</div>
+        <div class="client-icon"><img ng-src="img/icons/{{ myClient.info.iconId || 0 }}.png"/></div>
       </div>
 
       <div class="lyric">
         <div class="lyric-kana">
-          <span class="solved">{{ getClientSolvedKana(clientId) }}</span><span class="unsolved">{{ getClientUnsolvedKana(clientId) }}</span>
+          <span class="solved">{{ game.getTypingStatus().solvedKana }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedKana }}</span>
         </div>
-        <div class="lyric-original">{{ lyric.originalLyric }}</div>
+        <div class="lyric-original">{{ game.getCurrentLyric().originalLyric }}</div>
         <div class="lyric-roma">
-          <span class="solved">{{ getClientSolvedRoma(clientId) }}</span><span class="unsolved">{{ getClientUnsolvedRoma(clientId) }}</span>
+          <span class="solved">{{ game.getTypingStatus().solvedRoma }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedRoma }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- other entry clients -->
+    <div class="entry-client" ng-repeat="client in game.getOtherEntryClientInfos()">
+      <div class="client-info">
+        <div class="client-icon">
+          <img ng-src="img/icons/{{ client.info.iconId }}.png" width="40" height="40" />
+        </div>
+        <div class="client-name">{{ client.info.userName }}</div>
+        <div class="client-score-point">{{ client.score.totalScore.point || 0 | number }} Pt</div>
+      </div>
+
+      <div class="lyric">
+        <div class="lyric-kana">
+          <span class="solved">{{ game.getTypingStatus().solvedKana }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedKana }}</span>
         </div>
       </div>
     </div>

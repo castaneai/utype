@@ -1,4 +1,4 @@
-module utype {
+declare module utype {
 	/**
 	 * 歌詞情報
 	 */
@@ -6,32 +6,46 @@ module utype {
 		/**
 		 * 歌詞の表示時間（ミリ秒）
 		 */
-			duration: number;
+        duration: number;
 
 		/**
 		 * 歌詞
 		 */
-			originalLyric: string;
+        originalLyric: string;
 
 		/**
 		 * 歌詞のひらがな文
 		 */
-			kanaLyric: string;
+        kanaLyric: string;
 	}
+
+    /**
+     * ゲームに接続しているクライアント
+     */
+    export interface Client {
+        info: ClientInfo;
+        score: ClientScore;
+    }
+
+    export interface ClientInfoDict {
+        [clientId: string]: ClientInfo;
+    }
 
 	/**
 	 * クライアントの情報
 	 */
 	export interface ClientInfo {
+        id: string;
 		userName: string;
 		iconId: number;
 	}
 
 	/**
-	 * クライアント情報を保持する辞書
+	 * クライアントの成績情報
 	 */
-	export interface ClientInfoDict {
-		[clientId: string]: ClientInfo;
+	export interface ClientScore {
+		totalScore: TotalScore;
+		intervalScore: IntervalScore;
 	}
 
 	/**
@@ -42,20 +56,10 @@ module utype {
 		 * ひらがなの問題文をどこまで打ち終わったか
 		 */
 		kanaSolvedCount: number;
-
-		/**
-		 * 打ち終わったローマ字部分
-		 */
-		solvedRoma: string;
-
-		/**
-		 * まだ打ち終わってないローマ字部分
-		 */
-		unsolvedRoma: string;
 	}
 
 	/**
-	 * ゲーム全体ごとの成績
+	 * ゲーム全体の成績
 	 */
 	export interface TotalScore {
 		/**
@@ -69,11 +73,26 @@ module utype {
 		missCount: number;
 	}
 
-	/**
-	 * クライアントの成績情報
-	 */
-	export interface ClientScore {
-		totalScore: TotalScore;
-		intervalScore: IntervalScore;
-	}
+    /**
+     * サーバにエントリ申請するときのデータ
+     */
+    export interface EntryRequestData {
+        iconId: number;
+
+        userName: string;
+    }
+
+    export interface EntryUpdateData {
+        /**
+         * 現在エントリー中のクライアント一覧
+         */
+        entryClientInfos: ClientInfo[];
+    }
+
+    export interface TypingStatus {
+        solvedKana: string;
+        unsolvedKana: string;
+        solvedRoma: string;
+        unsolvedRoma: string;
+    }
 }

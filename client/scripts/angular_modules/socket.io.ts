@@ -1,4 +1,4 @@
-/// <reference path="../../d.ts/DefinitelyTyped/angularjs/angular.d.ts" />
+/// <reference path="../../../d.ts/DefinitelyTyped/angularjs/angular.d.ts" />
 
 declare var io: {connect: (url) => void};
 

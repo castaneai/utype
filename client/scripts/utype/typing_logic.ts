@@ -1,5 +1,4 @@
 /// <reference path="../../../d.ts/typing.d.ts" />
-/// <reference path="event.ts" />
 
 module utype {
 

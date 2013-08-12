@@ -1,5 +1,5 @@
+/// <reference path="../../../d.ts/utype.d.ts" />
 /// <reference path="../../../d.ts/DefinitelyTyped/jquery/jquery.d.ts" />
-/// <reference path="interface.d.ts" />
 
 module utype {
 

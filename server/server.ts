@@ -5,8 +5,9 @@
 var app = require('express')();
 var server = require('http').createServer(app);
 var io: SocketManager = require('socket.io').listen(server);
+var _ = require('lodash');
 
-var entryClients: ClientInfoDict = {};
+var entryClients: utype.ClientInfoDict = {};
 
 io.sockets.on('connection', (socket: Socket) => {
 
@@ -22,26 +23,31 @@ io.sockets.on('connection', (socket: Socket) => {
 			delete entryClients[socket.id];
 		}
 		// エントリー一覧が変更されたことを前クライアントに通知する
-		io.sockets.emit('entry.update', entryClients);
+		io.sockets.emit('entry.update', {
+            entryClientInfos: _.values(entryClients)
+        });
 	});
 
 	/**
 	 * クライアントがゲームにエントリーしたとき
 	 */
-	socket.on('entry', (data: ClientInfo) => {
+	socket.on('entry.request', (data: utype.EntryRequestData) => {
 		entryClients[socket.id] = {
+            id: socket.id,
 			userName: data.userName,
 			iconId: data.iconId
 		};
-		socket.emit('entry.accept', {clientId: socket.id});
-		io.sockets.emit('entry.update', entryClients);
+		socket.emit('entry.response', entryClients[socket.id]);
+        io.sockets.emit('entry.update', {
+            entryClientInfos: _.values(entryClients)
+        });
 	});
 
 	/**
 	 * エントリー済のクライアントがゲームを開始した時
 	 */
-    socket.on('start', (data) => {
-        socket.broadcast.emit('start', data);
+    socket.on('start.request', () => {
+        io.sockets.emit('start.response');
     });
 
 	/**

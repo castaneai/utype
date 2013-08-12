@@ -1,9 +1,9 @@
-/// <reference path="interface.d.ts" />
+/// <reference path="../../../d.ts/utype.d.ts" />
 /// <reference path="event.ts" />
 
 module utype {
 
-    export enum TimerState {
+    enum TimerState {
         READY,
         RUN,
         PAUSE
@@ -16,7 +16,7 @@ module utype {
      * 一度経過が終わったあとでも、もう一回startメソッドを呼び出すことで
      * 同じオブジェクトで何回でも経過イベントを取れる
      */
-    export class Timer implements Stateful {
+    export class Timer {
 
         /**
          * 一時停止したとき
@@ -73,13 +73,6 @@ module utype {
         }
 
         /**
-         * 現在の状態を返す
-         */
-        public getState(): TimerState {
-            return this._state;
-        }
-
-        /**
          * タイマーを一時停止する
          */
         public pause(): void {
@@ -114,7 +107,7 @@ module utype {
          * 一時停止・再開を切り替える
          */
         public togglePause(): void {
-            (this.getState() === TimerState.RUN) ? this.pause() : this.resume();
+            (this._state === TimerState.RUN) ? this.pause() : this.resume();
         }
 
         /**

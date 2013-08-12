@@ -1,7 +1,6 @@
 /// <reference path="../../d.ts/DefinitelyTyped/angularjs/angular.d.ts" />
 /// <reference path="../../d.ts/DefinitelyTyped/socket.io/socket.io.d.ts" />
 /// <reference path="../../d.ts/utype.d.ts" />
-/// <reference path="utype/interface.d.ts" />
 /// <reference path="utype/typing_logic.ts" />
 /// <reference path="utype/progress_view.ts" />
 /// <reference path="utype/lyric_switcher.ts" />

@@ -1,4 +1,4 @@
-/// <reference path="interface.d.ts" />
+/// <reference path="../../../d.ts/utype.d.ts" />
 /// <reference path="timer.ts" />
 /// <reference path="lyric_set.ts" />
 /// <reference path="event.ts" />
@@ -33,8 +33,8 @@ module utype {
 			this.onSwitch.dispatch(this._lyrics.getCurrentLyric());
 		}
 
-		public getTotalDuration(): number {
-			return this._lyrics.getTotalDuration();
-		}
+        public getLyricSet(): LyricSet {
+            return this._lyrics;
+        }
 	}
 }

@@ -1,4 +1,4 @@
-/// <reference path="interface.d.ts" />
+/// <reference path="../../../d.ts/utype.d.ts" />
 
 module utype {
 
