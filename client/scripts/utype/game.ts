@@ -4,6 +4,7 @@
 /// <reference path="lyric_switcher.ts" />
 /// <reference path="typing_logic.ts" />
 /// <reference path="event.ts" />
+/// <reference path="progress_view.ts" />
 
 module utype {
 
@@ -19,22 +20,28 @@ module utype {
 
 	export class Game {
 
-        public onStatusChanged = new Event<() => void>();
+		/**
+		 * ゲームの状況が少しでも変化したらこのイベントが発生する
+		 * 主にViewへ変更を通知するために使う
+		 */
+		public onChanged = new Event<() => void>();
 
 		/**
 		 * ゲームの状態
 		 */
 		private _gameStatus: GameStatus = GameStatus.WATCH;
 
+		/**
+		 * ゲームにエントリーしているクライアントの一覧
+		 * 自分自身のクライアントも含む
+		 */
+		private _entryClients: Client[] = [];
+
         /**
          * 自分自身のクライアント
          */
         private _myClient: Client = null;
 
-		/**
-		 * ゲームにエントリーしている自分以外のクライアントの一覧
-		 */
-		private _otherEntryClients: ClientInfo[] = [];
 
 		/**
 		 * ネットワーク連携に使用するソケット(socket.ioのSocketオブジェクト)
@@ -51,6 +58,10 @@ module utype {
          */
         private _typing: TypingLogic = null;
 
+		private _totalProgressBar = new ProgressView('#total-bar');
+
+		private _intervalProgressBar = new ProgressView('#interval-bar');
+
 		/**
 		 * 新しいutypeゲームを作成する
 		 * @param lyrics 歌詞リスト
@@ -61,6 +72,7 @@ module utype {
             this._setSocketEventListeners();
             this._lyricSwitcher = new LyricSwitcher(lyrics);
             this._typing = new TypingLogic();
+
 		}
 
         /**
@@ -77,7 +89,6 @@ module utype {
          */
 		public startGame(): void {
 			this._socket.emit('start.request');
-            this._startGame();
 		}
 
         /**
@@ -90,10 +101,12 @@ module utype {
             } else if (this._gameStatus === GameStatus.PLAY) {
                 var typedChar = String.fromCharCode(keyCode);
                 if (this._typing.type(typedChar)) {
-                    // success type
+	                this._onSuccessTyping();
                 } else {
-                    // miss type
+	                this._onMissTyping();
                 }
+	            this._socket.emit('type', this._myClient.score);
+	            this.onChanged.dispatch();
             }
 		}
 
@@ -114,13 +127,45 @@ module utype {
             return this._myClient;
         }
 
-        public getOtherEntryClientInfos(): ClientInfo[] {
-            return this._otherEntryClients;
+        public getEntryClients(): Client[] {
+            return this._entryClients;
         }
+
+		public getClientScore(client: Client): ClientScore {
+			if (this._myClient != null && client.info.id === this._myClient.info.id) {
+				return this._myClient.score;
+			} else {
+				return client.score;
+			}
+		}
+
+		public getClientSolvedKana(client: Client): string {
+			if (this._myClient != null && client.info.id === this._myClient.info.id) {
+				return this._typing.getSolvedKana();
+			} else {
+				return this.getCurrentLyric().kanaLyric.substr(0, client.score.intervalScore.kanaSolvedCount);
+			}
+		}
+
+		public getClientUnsolvedKana(client: Client): string {
+			if (this._myClient != null && client.info.id === this._myClient.info.id) {
+				return this._typing.getUnsolvedKana();
+			} else {
+				return this.getCurrentLyric().kanaLyric.substr(client.score.intervalScore.kanaSolvedCount);
+			}
+		}
 
         public isWatchStatus(): boolean {
             return this._gameStatus === GameStatus.WATCH;
         }
+
+		public isEntryStatus(): boolean {
+			return this._gameStatus === GameStatus.ENTRY;
+		}
+
+		public isPlayStatus(): boolean {
+			return this._gameStatus === GameStatus.PLAY;
+		}
 
         /**
          * ゲーム状態を切り替える
@@ -133,7 +178,7 @@ module utype {
         private _switchStatus(requireStatus: GameStatus, newStatus: GameStatus, errorMessage: string): void {
             this._checkGameStatus(requireStatus, errorMessage);
             this._gameStatus = newStatus;
-            this.onStatusChanged.dispatch();
+            this.onChanged.dispatch();
         }
 
         /**
@@ -165,16 +210,23 @@ module utype {
                 this._switchStatus(GameStatus.WATCH, GameStatus.ENTRY, 'エントリ申請をするにはWATCH（観戦）状態である必要があります');
             });
 
-            // 他のエントリーしたクライアントがゲームを開始させたとき
+            // サーバからゲーム開始命令が来た時
             this._socket.on('start.response', () => {
                 this._startGame();
             });
 
             // エントリーした人の一覧が更新されたとき
 			this._socket.on('entry.update', (data: EntryUpdateData) => {
-                // 自分自身以外のクライアント情報を更新する
-                this._otherEntryClients = _.filter(data.entryClientInfos, (info: ClientInfo) => info.id !== this._myClient.info.id);
+				this._entryClients = <Client[]> _.map(data.entryClientInfos, (info) => {
+					return this._createNewClient(info);
+				});
+				this.onChanged.dispatch();
 			});
+
+	        this._socket.on('type', (data) => {
+				this._getClient(data.clientId).score = data.clientScore;
+		        this.onChanged.dispatch();
+	        });
 		}
 
         /**
@@ -184,6 +236,48 @@ module utype {
          */
 		private _startGame(): void {
             this._switchStatus(GameStatus.ENTRY, GameStatus.PLAY, 'ゲームを開始するにはENTRY状態である必要があります');
+	        /*
+	        var videoElement = <HTMLMediaElement> document.getElementsByTagName('video')[0];
+	        videoElement.play();
+	        */
+	        var audioElem = <HTMLAudioElement> document.getElementsByTagName('audio')[0];
+	        audioElem.play();
+	        this._lyricSwitcher.onSwitch.addListener((lyric: utype.Lyric) => {
+		        this._setLyric(lyric);
+	        });
+	        this._lyricSwitcher.onFinish.addListener(() => {
+		        // TODO: すべての歌詞が終了したとき
+	        });
+	        this._lyricSwitcher.start();
+	        this._totalProgressBar.startAnimation(100, this._lyricSwitcher.getLyricSet().getTotalDuration());
+		}
+
+		/**
+		 * 新たにスイッチされた歌詞を設定する
+		 */
+		private _setLyric(lyric: Lyric): void {
+			this._typing.registerSubject(lyric.kanaLyric);
+			this._intervalProgressBar.setPercentage(0);
+			this._intervalProgressBar.startAnimation(100, lyric.duration);
+			_.forEach(this._entryClients, (client: Client) => {
+				client.score.intervalScore = {
+					kanaSolvedCount: 0
+				};
+			});
+			this.onChanged.dispatch();
+		}
+
+		private _onSuccessTyping(): void {
+			// TODO: スコア点数計算式
+			this._myClient.score.totalScore.point += 100;
+			this._myClient.score.intervalScore = {
+				kanaSolvedCount: this._typing.getKanaSolvedCount()
+			};
+		}
+
+		private _onMissTyping(): void {
+			// TODO: ミス計算
+			this._myClient.score.totalScore.missCount += 1;
 		}
 
         /**
@@ -197,5 +291,9 @@ module utype {
                 throw new Error(errorMessage);
             }
         }
+
+		private _getClient(clientId: string): Client {
+			return <Client> _.find(this._entryClients, (c) => c.info.id === clientId);
+		}
 	}
 }

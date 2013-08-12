@@ -5,26 +5,35 @@
 var app = require('express')();
 var server = require('http').createServer(app);
 var io: SocketManager = require('socket.io').listen(server);
-var _ = require('lodash');
 
-var entryClients: utype.ClientInfoDict = {};
+var entryClientInfosDict: utype.ClientInfoDict = {};
+
+function getEntryClientInfos(): utype.ClientInfo[] {
+	var result = [];
+	for (var clientId in entryClientInfosDict) {
+		result.push(entryClientInfosDict[clientId]);
+	}
+	return result;
+}
 
 io.sockets.on('connection', (socket: Socket) => {
 
 	// 初めて接続してきたクライアントにはエントリー一覧を送る
-	socket.emit('entry.update', entryClients);
+	socket.emit('entry.update', {
+		entryClientInfos: getEntryClientInfos()
+	});
 
 	/**
 	 * クライアントが切断したとき
 	 */
 	socket.on('disconnect', () => {
 		// エントリー済のクライアントが切断したらエントリー一覧から削除
-		if (socket.id in entryClients) {
-			delete entryClients[socket.id];
+		if (socket.id in entryClientInfosDict) {
+			delete entryClientInfosDict[socket.id];
 		}
 		// エントリー一覧が変更されたことを前クライアントに通知する
 		io.sockets.emit('entry.update', {
-            entryClientInfos: _.values(entryClients)
+            entryClientInfos: getEntryClientInfos()
         });
 	});
 
@@ -32,14 +41,14 @@ io.sockets.on('connection', (socket: Socket) => {
 	 * クライアントがゲームにエントリーしたとき
 	 */
 	socket.on('entry.request', (data: utype.EntryRequestData) => {
-		entryClients[socket.id] = {
+		entryClientInfosDict[socket.id] = {
             id: socket.id,
 			userName: data.userName,
 			iconId: data.iconId
 		};
-		socket.emit('entry.response', entryClients[socket.id]);
+		socket.emit('entry.response', entryClientInfosDict[socket.id]);
         io.sockets.emit('entry.update', {
-            entryClientInfos: _.values(entryClients)
+            entryClientInfos: getEntryClientInfos()
         });
 	});
 
@@ -53,10 +62,10 @@ io.sockets.on('connection', (socket: Socket) => {
 	/**
 	 * ゲームプレイ中のクライアントがキーボードをタイプした時
 	 */
-    socket.on('type', (data) => {
+    socket.on('type', (score: utype.ClientScore) => {
         socket.broadcast.emit('type', {
 	        clientId: socket.id,
-	        clientScore: data
+	        clientScore: score
         });
     });
 });

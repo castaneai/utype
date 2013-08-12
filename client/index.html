@@ -25,18 +25,16 @@
 
 <div class="container">
 
-  <!-- header -->
-  <div class="header">
-    <h1>UType!</h1>
-  </div>
-
   <!-- body -->
   <div class="body">
 
     <!-- video player -->
-    <div class="video-player">
-      <video src="videos/mondai_kaiketsu.mp4" width="800" />
+    <!--
+    <div class="video-player" style="text-align: center;">
+      <video src="videos/mondai_kaiketsu.mp4" width="600" />
     </div>
+    -->
+    <audio src="musics/mondai_kaiketsu.mp3"></audio>
 
     <!-- progress bar -->
     <div id="total-bar" class="progress">
@@ -64,36 +62,28 @@
       </div>
     </div>
       
-    <!-- my entry client -->
-    <div class="entry-client" ng-show="game.getMyClient() == true">
-      <div class="client-info">
-        <div class="client-icon"><img ng-src="img/icons/{{ myClient.info.iconId || 0 }}.png"/></div>
+    <!-- typing game lyric -->
+    <div class="lyric" ng-show="game.isPlayStatus()">
+      <div class="lyric-kana">
+        <span class="solved">{{ game.getTypingStatus().solvedKana }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedKana }}</span>
       </div>
-
-      <div class="lyric">
-        <div class="lyric-kana">
-          <span class="solved">{{ game.getTypingStatus().solvedKana }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedKana }}</span>
-        </div>
-        <div class="lyric-original">{{ game.getCurrentLyric().originalLyric }}</div>
-        <div class="lyric-roma">
-          <span class="solved">{{ game.getTypingStatus().solvedRoma }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedRoma }}</span>
-        </div>
+      <div class="lyric-original">{{ game.getCurrentLyric().originalLyric }}</div>
+      <div class="lyric-roma">
+        <span class="solved">{{ game.getTypingStatus().solvedRoma }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedRoma }}</span>
       </div>
     </div>
 
-    <!-- other entry clients -->
-    <div class="entry-client" ng-repeat="client in game.getOtherEntryClientInfos()">
+    <!-- entry client scores -->
+    <div class="entry-client" ng-repeat="client in game.getEntryClients()">
       <div class="client-info">
-        <div class="client-icon">
-          <img ng-src="img/icons/{{ client.info.iconId }}.png" width="40" height="40" />
-        </div>
+        <img ng-src="img/icons/{{ client.info.iconId || 0 }}.png" class="client-icon" />
+        <div class="client-score-point">{{ game.getClientScore(client).totalScore.point || 0 | number }} Pt</div>
         <div class="client-name">{{ client.info.userName }}</div>
-        <div class="client-score-point">{{ client.score.totalScore.point || 0 | number }} Pt</div>
       </div>
 
       <div class="lyric">
         <div class="lyric-kana">
-          <span class="solved">{{ game.getTypingStatus().solvedKana }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedKana }}</span>
+          <span class="solved">{{ game.getClientSolvedKana(client) }}</span><span class="unsolved">{{ game.getClientUnsolvedKana(client) }}</span>
         </div>
       </div>
     </div>

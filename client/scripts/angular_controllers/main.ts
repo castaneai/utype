@@ -2,6 +2,8 @@
 /// <reference path="../utype/tm_xml_parser.ts" />
 /// <reference path="../utype/game.ts" />
 
+declare var testLyrics: utype.Lyric[];
+
 var app = angular.module('utype', ['socket.io']);
 app.controller('MainController', ['$scope', 'socket', function($scope, socket) {
 
@@ -18,7 +20,7 @@ app.controller('MainController', ['$scope', 'socket', function($scope, socket) {
     utype.TmXmlParser.parse('xml/mondai_kaiketsu.xml', (lyrics: utype.Lyric[]) => {
         game = new utype.Game(lyrics, socket);
         $scope.game = game;
-        $scope.game.onStatusChanged.addListener(() => {
+        $scope.game.onChanged.addListener(() => {
             $scope.$apply();
         });
         $scope.$apply();
