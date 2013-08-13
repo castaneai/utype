@@ -123,6 +123,10 @@ module utype {
             this._lastStartedDate = new Date();
         }
 
+        public isReady(): boolean {
+            return this._state === TimerState.READY;
+        }
+
         public isPausing(): boolean {
             return this._state === TimerState.PAUSE;
         }

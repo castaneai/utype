@@ -273,8 +273,7 @@ module utype {
 	        });
 	        this._lyricSwitcher.start();
 	        this._totalProgressBar.startAnimation(100, this._lyricSwitcher.getLyricSet().getTotalDuration());
-            // wpm計測を開始する
-            this._startCalculateWpm();
+
 		}
 
 		/**
@@ -282,10 +281,12 @@ module utype {
 		 */
 		private _setLyric(lyric: Lyric): void {
             if (lyric.kanaLyric != '') {
+                if (this._wpmTimer.isReady()) {
+                    this._startCalculateWpm();
+                }
                 // WPM計測が一時停止されていた場合は再開する
-                if (this._wpmTimer.isPausing()) {
+                else if (this._wpmTimer.isPausing()) {
                     this._wpmTimer.resume();
-                    console.log('resume wpm!');
                 }
             }
             this._typing.registerSubject(lyric.kanaLyric);
@@ -307,7 +308,6 @@ module utype {
             this._oldSolvedRomaCount = this._typing.getSolvedRoma().length;
             // そのインターバルをすべて打ち終わったらWPM計測を止める
             if (this._typing.isFinish()) {
-                console.log('pause');
                 this._wpmTimer.pause();
             }
 			// TODO: スコア点数計算式
