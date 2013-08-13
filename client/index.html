@@ -11,7 +11,7 @@
   <!-- vendor libs -->
   <script src="bower_components/underscore/underscore.js"></script>
   <script src="bower_components/jquery/jquery.js"></script>
-  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/angular-unstable/angular.js"></script>
   <script src="scripts/typing.js"></script>
 
   <!-- server -->
@@ -36,13 +36,24 @@
     -->
     <audio src="musics/mondai_kaiketsu.mp3"></audio>
 
-    <!-- progress bar -->
-    <div id="total-bar" class="progress">
-      <div class="bar" style="width: 0%;"></div>
+    <!-- progress bars -->
+    <div class="progress-bar-container">
+      <div class="progress-bar-title-column">
+        <ul>
+          <li>TOTAL</li>
+          <li>INTERVAL</li>
+        </ul>
+      </div>
+      <div class="progress-bar-column">
+        <div id="total-bar" class="progress">
+          <div class="bar" style="width: 0%;"></div>
+        </div>
+        <div id="interval-bar" class="progress">
+          <div class="bar" style="width: 0%"></div>
+        </div>
+      </div>
     </div>
-    <div id="interval-bar" class="progress">
-      <div class="bar" style="width: 0%"></div>
-    </div>
+
 
     <!-- entry area -->
     <div class="entry">
@@ -74,14 +85,26 @@
     </div>
 
     <!-- entry client scores -->
-    <div class="entry-client" ng-repeat="client in game.getEntryClients()">
+    <div class="entry-client"
+         ng-repeat="client in game.getEntryClients()"
+      >
+      <div class="client-order">
+        <h1>{{ $index + 1 }}位</h1>
+      </div>
       <div class="client-info">
         <img ng-src="img/icons/{{ client.info.iconId || 0 }}.png" class="client-icon" />
-        <div class="client-score-point">{{ game.getClientScore(client).totalScore.point || 0 | number }} Pt</div>
         <div class="client-name">{{ client.info.userName }}</div>
       </div>
 
-      <div class="lyric">
+      <div class="client-score">
+        <ul>
+          <li>{{ game.getClientScore(client).totalScore.point || 0 | number }} Pt</li>
+          <li>{{ game.getClientScore(client).totalScore.missCount || 0 | number }} Miss</li>
+          <li>{{ game.getClientScore(client).totalScore.wpm || 0 | number }} WPM</li>
+        </ul>
+      </div>
+
+      <div class="client-lyric">
         <div class="lyric-kana">
           <span class="solved">{{ game.getClientSolvedKana(client) }}</span><span class="unsolved">{{ game.getClientUnsolvedKana(client) }}</span>
         </div>

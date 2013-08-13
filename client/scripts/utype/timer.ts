@@ -122,5 +122,9 @@ module utype {
             }, duration);
             this._lastStartedDate = new Date();
         }
+
+        public isPausing(): boolean {
+            return this._state === TimerState.PAUSE;
+        }
     }
 }

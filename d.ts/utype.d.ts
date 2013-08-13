@@ -71,6 +71,11 @@ declare module utype {
 		 * ミスタッチ数
 		 */
 		missCount: number;
+
+        /**
+         * Word per minutes
+         */
+        wpm: number;
 	}
 
     /**

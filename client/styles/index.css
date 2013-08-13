@@ -26,11 +26,26 @@ html, body {
   padding: 24px;
 }
 
-.progress {
-  margin: 8px 0;
-  border: 1px solid #333;
-  height: 8px;
+.progress-bar-title-column,
+.progress-bar-column {
+    display: inline-block;
+    vertical-align: top;
+}
 
+.progress-bar-title-column {
+    text-align: right;
+    width: 10%;
+}
+
+.progress-bar-column {
+    width: 88%;
+}
+
+.progress {
+    margin-bottom: 8px;
+    border: 1px solid #333;
+    height: 1em;
+    width: 100%;
 }
 .progress .bar {
     background-color: #333;
@@ -50,39 +65,44 @@ html, body {
     margin: 8px 0;
 }
 
+.client-order,
 .client-info,
-.lyric {
+.client-score,
+.client-lyric {
     display: inline-block;
     vertical-align: middle;
 }
 
+.client-order {
+    text-align: center;
+    width: 7%;
+    font-size: 2em;
+}
+
 .client-info {
-    position: relative;
-    width: 80px;
-    height: 80px;
+    width: 10%;
 }
 
 .client-icon {
-    position: absolute;
-    height: 100%;
+    width: 100%;
+    vertical-align: bottom;
 }
 
-.client-name,
-.client-score-point {
+.client-name {
     text-align: center;
-    position: absolute;
     background: rgba(0,0,0,0.8);
     color: white;
     width: 100%;
     font-size: x-small;
-}
-
-.client-score-point {
-    top: 0;
-}
-
-.client-name {
     bottom: 0;
+}
+
+.client-score {
+    width: 10%;
+}
+
+.client-lyric {
+    width: 68%;
 }
 
 .lyric {

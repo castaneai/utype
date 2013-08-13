@@ -81,5 +81,12 @@ module utype {
         public getUnsolvedRoma(): string {
             return this._typing.getRemainedQuestion();
         }
+
+        /**
+         * 現在の問題を完全に打ち終わったかどうかを返す
+         */
+        public isFinish(): boolean {
+            return this._typing.isFinish();
+        }
     }
 }

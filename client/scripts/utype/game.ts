@@ -62,6 +62,19 @@ module utype {
 
 		private _intervalProgressBar = new ProgressView('#interval-bar');
 
+        /**
+         * WPMを計測するタイマー
+         */
+        private _wpmTimer = new Timer();
+
+        private _oldSolvedRomaCount = 0;
+
+        /**
+         * 曲全体で打ったアルファベットの数
+         * WPM計測に使う
+         */
+        private _totalTypedWordCount = 0;
+
 		/**
 		 * 新しいutypeゲームを作成する
 		 * @param lyrics 歌詞リスト
@@ -99,6 +112,9 @@ module utype {
             if (this._gameStatus === GameStatus.ENTRY && keyCode === KeyCode.SPACE) {
                 this.startGame();
             } else if (this._gameStatus === GameStatus.PLAY) {
+                if (this._typing.isFinish()) {
+                    return;
+                }
                 var typedChar = String.fromCharCode(keyCode);
                 if (this._typing.type(typedChar)) {
 	                this._onSuccessTyping();
@@ -134,10 +150,16 @@ module utype {
 		public getClientScore(client: Client): ClientScore {
 			if (this._myClient != null && client.info.id === this._myClient.info.id) {
 				return this._myClient.score;
-			} else {
+			} else if('score' in client) {
 				return client.score;
-			}
+            } else {
+                return null;
+            }
 		}
+
+        public getClientTotalScorePoint(client: Client): number {
+            return this.getClientScore(client).totalScore.point;
+        }
 
 		public getClientSolvedKana(client: Client): string {
 			if (this._myClient != null && client.info.id === this._myClient.info.id) {
@@ -194,7 +216,8 @@ module utype {
                     },
                     totalScore: {
                         point: 0,
-                        missCount: 0
+                        missCount: 0,
+                        wpm: 0
                     }
                 }
             };
@@ -250,13 +273,22 @@ module utype {
 	        });
 	        this._lyricSwitcher.start();
 	        this._totalProgressBar.startAnimation(100, this._lyricSwitcher.getLyricSet().getTotalDuration());
+            // wpm計測を開始する
+            this._startCalculateWpm();
 		}
 
 		/**
 		 * 新たにスイッチされた歌詞を設定する
 		 */
 		private _setLyric(lyric: Lyric): void {
-			this._typing.registerSubject(lyric.kanaLyric);
+            if (lyric.kanaLyric != '') {
+                // WPM計測が一時停止されていた場合は再開する
+                if (this._wpmTimer.isPausing()) {
+                    this._wpmTimer.resume();
+                    console.log('resume wpm!');
+                }
+            }
+            this._typing.registerSubject(lyric.kanaLyric);
 			this._intervalProgressBar.setPercentage(0);
 			this._intervalProgressBar.startAnimation(100, lyric.duration);
 			_.forEach(this._entryClients, (client: Client) => {
@@ -268,6 +300,16 @@ module utype {
 		}
 
 		private _onSuccessTyping(): void {
+            var increasedRomaSolvedCount = this._typing.getSolvedRoma().length - this._oldSolvedRomaCount;
+            if (increasedRomaSolvedCount > 0) {
+                this._totalTypedWordCount += increasedRomaSolvedCount;
+            }
+            this._oldSolvedRomaCount = this._typing.getSolvedRoma().length;
+            // そのインターバルをすべて打ち終わったらWPM計測を止める
+            if (this._typing.isFinish()) {
+                console.log('pause');
+                this._wpmTimer.pause();
+            }
 			// TODO: スコア点数計算式
 			this._myClient.score.totalScore.point += 100;
 			this._myClient.score.intervalScore = {
@@ -295,5 +337,21 @@ module utype {
 		private _getClient(clientId: string): Client {
 			return <Client> _.find(this._entryClients, (c) => c.info.id === clientId);
 		}
+
+        private _startCalculateWpm(): void {
+            var calculatePollingMilliseconds = 100;
+            var elapsedTypingMilliseconds = 0;
+            this._wpmTimer.onElapsed.addListener(() => {
+                var elapsedTypingMinutes = elapsedTypingMilliseconds / 1000 / 60;
+                var wpm = this._totalTypedWordCount / elapsedTypingMinutes;
+                if (wpm >= 0) {
+                    this._myClient.score.totalScore.wpm = Math.round(wpm);
+                    this.onChanged.dispatch();
+                }
+                elapsedTypingMilliseconds += calculatePollingMilliseconds;
+                this._wpmTimer.start(calculatePollingMilliseconds);
+            });
+            this._wpmTimer.start(calculatePollingMilliseconds);
+        }
 	}
 }
