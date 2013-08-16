@@ -259,12 +259,12 @@ module utype {
          */
 		private _startGame(): void {
             this._switchStatus(GameStatus.ENTRY, GameStatus.PLAY, 'ゲームを開始するにはENTRY状態である必要があります');
-	        /*
 	        var videoElement = <HTMLMediaElement> document.getElementsByTagName('video')[0];
 	        videoElement.play();
-	        */
+            /*
 	        var audioElem = <HTMLAudioElement> document.getElementsByTagName('audio')[0];
 	        audioElem.play();
+	        */
 	        this._lyricSwitcher.onSwitch.addListener((lyric: utype.Lyric) => {
 		        this._setLyric(lyric);
 	        });
@@ -273,19 +273,27 @@ module utype {
 	        });
 	        this._lyricSwitcher.start();
 	        this._totalProgressBar.startAnimation(100, this._lyricSwitcher.getLyricSet().getTotalDuration());
-            // wpm計測を開始する
-            this._startCalculateWpm();
 		}
 
 		/**
 		 * 新たにスイッチされた歌詞を設定する
 		 */
 		private _setLyric(lyric: Lyric): void {
-            if (lyric.kanaLyric != '') {
+            if (lyric.kanaLyric == '') {
+                if (this._wpmTimer.isRunning()) {
+                    console.log('pause wpm!')
+                    this._wpmTimer.pause();
+                }
+            }
+            else {
                 // WPM計測が一時停止されていた場合は再開する
-                if (this._wpmTimer.isPausing()) {
+                if (this._wpmTimer.isReady()) {
+                    console.log('start wpm!');
+                    this._startCalculateWpm();
+                }
+                else if (this._wpmTimer.isPausing()) {
+                    console.log('resume wpm!')
                     this._wpmTimer.resume();
-                    console.log('resume wpm!');
                 }
             }
             this._typing.registerSubject(lyric.kanaLyric);

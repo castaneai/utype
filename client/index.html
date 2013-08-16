@@ -29,12 +29,12 @@
   <div class="body">
 
     <!-- video player -->
-    <!--
     <div class="video-player" style="text-align: center;">
-      <video src="videos/mondai_kaiketsu.mp4" width="600" />
+      <video src="videos/wonderful_rush.mp4" width="640" />
     </div>
-    -->
+    <!--
     <audio src="musics/mondai_kaiketsu.mp3"></audio>
+    -->
 
     <!-- progress bars -->
     <div class="progress-bar-container">
@@ -88,9 +88,6 @@
     <div class="entry-client"
          ng-repeat="client in game.getEntryClients()"
       >
-      <div class="client-order">
-        <h1>{{ $index + 1 }}位</h1>
-      </div>
       <div class="client-info">
         <img ng-src="img/icons/{{ client.info.iconId || 0 }}.png" class="client-icon" />
         <div class="client-name">{{ client.info.userName }}</div>

@@ -17,7 +17,7 @@ app.controller('MainController', ['$scope', 'socket', function($scope, socket) {
         game.typeKey(keyEvent.which);
     }
 
-    utype.TmXmlParser.parse('xml/mondai_kaiketsu.xml', (lyrics: utype.Lyric[]) => {
+    utype.TmXmlParser.parse('xml/wonderful_rush.xml', (lyrics: utype.Lyric[]) => {
         game = new utype.Game(lyrics, socket);
         $scope.game = game;
         $scope.game.onChanged.addListener(() => {

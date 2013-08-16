@@ -1,6 +1,7 @@
 html, body {
   background-color: #eee;
   line-height: 1.6;
+  font-size: 88%;
   color: #333;
 }
 
@@ -17,7 +18,7 @@ html, body {
 }
 
 .header h1 {
-    font-size: 100px;
+    font-size: 72px;
     line-height: 1;
 }
 
@@ -57,7 +58,7 @@ html, body {
 }
 
 .entry h1 {
-    font-size: xx-large;
+    font-size: x-large;
     text-align: center;
 }
 
@@ -80,7 +81,7 @@ html, body {
 }
 
 .client-info {
-    width: 10%;
+    width: 6%;
 }
 
 .client-icon {
@@ -111,11 +112,11 @@ html, body {
 }
 
 .lyric-original {
-  font-size: xx-large;
+  font-size: x-large;
 }
 
 .lyric-roma {
-  font-size: x-large;
+  font-size: large;
 }
 
 .solved {
