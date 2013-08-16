@@ -315,7 +315,6 @@ module utype {
             this._oldSolvedRomaCount = this._typing.getSolvedRoma().length;
             // そのインターバルをすべて打ち終わったらWPM計測を止める
             if (this._typing.isFinish()) {
-                console.log('pause');
                 this._wpmTimer.pause();
             }
 			// TODO: スコア点数計算式
