@@ -8,8 +8,14 @@ module utype {
      */
     export class LyricSet {
 
+        /**
+         * 内部に持つ歌詞の配列
+         */
         private _lyrics: Lyric[];
 
+        /**
+         * 現在の歌詞のインデックス
+         */
         private _index: number = 0;
 
         constructor(lyrics: Lyric[]) {

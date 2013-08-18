@@ -13,6 +13,11 @@ module utype {
         private _typing: Typing;
 
         /**
+         * 打ち終わった文字数
+         */
+        private _totalTypedCount: number = 0;
+
+        /**
          * コンストラクタ
          */
         constructor() {
@@ -35,15 +40,14 @@ module utype {
          */
         public type(char: string): boolean {
             // TODO: 問題文が登録されていないときのエラー処理
-            return this._typing.answer(char);
+            var oldAnswered = this._typing.getAnswered();
+            var result = this._typing.answer(char);
+            var newAnswered = this._typing.getAnswered();
+            if (newAnswered - oldAnswered > 0) {
+                this._totalTypedCount += newAnswered - oldAnswered;
+            }
+            return result;
         }
-
-		/**
-		 * ひらがなの問題文を返す
-		 */
-		public getKanaSubject(): string {
-			return this._typing.getOriginalQuestion();
-		}
 
 		/**
 		 * ひらがなの問題文のうち既に打ち終わった数を返す
@@ -87,6 +91,13 @@ module utype {
          */
         public isFinish(): boolean {
             return this._typing.isFinish();
+        }
+
+        /**
+         * 打ち終わった文字数を返す
+         */
+        public getTotalTypedCount(): number {
+            return this._totalTypedCount;
         }
     }
 }

@@ -551,6 +551,10 @@
         return this.absoluteAnswered;
     }
 
+    function getAnswered() {
+        return this.answered;
+    }
+
     _Typing.prototype.register = register;
     _Typing.prototype.answer = answer;
     _Typing.prototype.isFinish = isFinish;
@@ -561,5 +565,6 @@
     _Typing.prototype.getAbsoluteAnswered = getAbsoluteAnswered;
     _Typing.prototype.getAnsweredQuestionIndex = getAnsweredQuestionIndex;
     _Typing.prototype.getFault = getFault;
+    _Typing.prototype.getAnswered = getAnswered;
 })
     (window);

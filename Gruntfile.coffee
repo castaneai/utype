@@ -30,7 +30,6 @@ module.exports = (grunt) ->
         dest: '<%= dirConfig.tmp %>/<%= dirConfig.test %>/test.js'
         options:
           target: 'es5'
-          base_path: 'test'
 
     watch:
       options:
@@ -41,6 +40,9 @@ module.exports = (grunt) ->
       typescript_server:
         files: '<%= dirConfig.server %>/{,*/}*.ts'
         tasks: 'typescript:server'
+      typescript_test:
+        files: ['<%= dirConfig.client %>/scripts/{,*/}*.ts', '<%= dirConfig.server %>/{,*/}*.ts', '<%= dirConfig.test %>/{,*/}*.ts']
+        tasks: ['typescript', 'karma:test:run']
 
     open:
       server:
@@ -50,12 +52,19 @@ module.exports = (grunt) ->
       server:
         options:
           # 外部に公開したい場合 #を外して0.0.0.0をホストにする
-          hostname: '0.0.0.0'
+          # hostname: '0.0.0.0'
           port: 10800
           server: '<%= dirConfig.tmp %>/<%= dirConfig.server %>/server.js'
           bases: ['<%= dirConfig.client %>', '<%= dirConfig.tmp %>/<%= dirConfig.client %>']
           livereload: true
 
+    karma:
+      test:
+        options:
+          configFile: 'karma.conf.js'
+          background: true
+
   # Gruntタスクの登録 grunt compile のようにして呼び出す
   grunt.registerTask('compile', ['typescript:client', 'typescript:server'])
   grunt.registerTask('server', ['compile', 'express', 'open', 'watch'])
+  grunt.registerTask('test', ['typescript', 'karma:test', 'watch:typescript_test'])
