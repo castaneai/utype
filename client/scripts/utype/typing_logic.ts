@@ -40,9 +40,9 @@ module utype {
          */
         public type(char: string): boolean {
             // TODO: 問題文が登録されていないときのエラー処理
-            var oldAnswered = this._typing.getAnswered();
+            var oldAnswered = this._typing.getAnsweredString().length;
             var result = this._typing.answer(char);
-            var newAnswered = this._typing.getAnswered();
+            var newAnswered = this._typing.getAnsweredString().length;
             if (newAnswered - oldAnswered > 0) {
                 this._totalTypedCount += newAnswered - oldAnswered;
             }

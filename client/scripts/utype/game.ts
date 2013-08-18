@@ -67,14 +67,6 @@ module utype {
          */
         private _wpmTimer = new Timer();
 
-        private _oldSolvedRomaCount = 0;
-
-        /**
-         * 曲全体で打ったアルファベットの数
-         * WPM計測に使う
-         */
-        private _totalTypedWordCount = 0;
-
 		/**
 		 * 新しいutypeゲームを作成する
 		 * @param lyrics 歌詞リスト
@@ -299,6 +291,7 @@ module utype {
             this._typing.registerSubject(lyric.kanaLyric);
 			this._intervalProgressBar.setPercentage(0);
 			this._intervalProgressBar.startAnimation(100, lyric.duration);
+            // TODO: 歌詞がセットされるたびに無理やりforでintervalScoreを初期化するのは汚い
 			_.forEach(this._entryClients, (client: Client) => {
 				client.score.intervalScore = {
 					kanaSolvedCount: 0
@@ -308,11 +301,6 @@ module utype {
 		}
 
 		private _onSuccessTyping(): void {
-            var increasedRomaSolvedCount = this._typing.getSolvedRoma().length - this._oldSolvedRomaCount;
-            if (increasedRomaSolvedCount > 0) {
-                this._totalTypedWordCount += increasedRomaSolvedCount;
-            }
-            this._oldSolvedRomaCount = this._typing.getSolvedRoma().length;
             // そのインターバルをすべて打ち終わったらWPM計測を止める
             if (this._typing.isFinish()) {
                 this._wpmTimer.pause();
@@ -350,7 +338,7 @@ module utype {
             var elapsedTypingMilliseconds = 0;
             this._wpmTimer.onElapsed.addListener(() => {
                 var elapsedTypingMinutes = elapsedTypingMilliseconds / 1000 / 60;
-                var wpm = this._totalTypedWordCount / elapsedTypingMinutes;
+                var wpm = this._typing.getTotalTypedCount() / elapsedTypingMinutes;
                 if (wpm >= 0) {
                     this._myClient.score.totalScore.wpm = Math.round(wpm);
                     this.onChanged.dispatch();

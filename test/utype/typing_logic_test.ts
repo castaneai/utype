@@ -10,11 +10,20 @@ describe('タイピングロジックは', function() {
     });
 
     it('複数の問題文を与えたとき打鍵数を加算してくれる', function() {
-        typing.registerSubject('あ');
-        typing.type('a');
-        typing.registerSubject('い');
-        typing.type('i');
+        typing.registerSubject('お');
+        typing.type('o');
+        expect(typing.getTotalTypedCount()).toBe('o'.length);
 
-        expect(typing.getTotalTypedCount()).toBe(2);
+        typing.registerSubject('こ');
+        typing.type('k');
+        typing.type('o');
+        expect(typing.getTotalTypedCount()).toBe('oko'.length);
+
+        typing.registerSubject('nano');
+        typing.type('n');
+        typing.type('a');
+        typing.type('n');
+        typing.type('o');
+        expect(typing.getTotalTypedCount()).toBe('okonano'.length);
     });
 })

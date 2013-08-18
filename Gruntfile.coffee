@@ -42,7 +42,7 @@ module.exports = (grunt) ->
         tasks: 'typescript:server'
       typescript_test:
         files: ['<%= dirConfig.client %>/scripts/{,*/}*.ts', '<%= dirConfig.server %>/{,*/}*.ts', '<%= dirConfig.test %>/{,*/}*.ts']
-        tasks: ['typescript', 'karma:test:run']
+        tasks: ['typescript', 'karma:test_background:run']
 
     open:
       server:
@@ -59,12 +59,14 @@ module.exports = (grunt) ->
           livereload: true
 
     karma:
-      test:
+      options:
+        configFile: 'karma.conf.js'
+        browsers: ['PhantomJS']
+      test_background:
         options:
-          configFile: 'karma.conf.js'
           background: true
 
   # Gruntタスクの登録 grunt compile のようにして呼び出す
   grunt.registerTask('compile', ['typescript:client', 'typescript:server'])
   grunt.registerTask('server', ['compile', 'express', 'open', 'watch'])
-  grunt.registerTask('test', ['typescript', 'karma:test', 'watch:typescript_test'])
+  grunt.registerTask('test', ['typescript', 'karma:test_background', 'watch:typescript_test'])
