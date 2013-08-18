@@ -40,9 +40,4 @@ declare class Typing {
      * 打ち終わってないローマ字文を返す
      */
     getRemainedQuestion(): string;
-
-    /**
-     * 打ち終わったローマ字の数を返す
-     */
-    getAnswered(): number;
 }

@@ -1,0 +1,15 @@
+<div ng-controller="LobbyController">
+	<div class="row">
+
+		<div class="col-6">
+			<h2>曲を選ぶドン！</h2>
+			<select ng-model="">
+				<option ng-repeat="music in musics" value="{{ music.id }}">{{ music.title }}</option>
+			</select>
+		</div>
+
+		<div class="col-6">
+
+		</div>
+	</div>
+</div>

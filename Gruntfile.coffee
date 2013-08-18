@@ -17,7 +17,7 @@ module.exports = (grunt) ->
     typescript:
       client:
         src: '<%= dirConfig.client %>/scripts/{,*/}*.ts'
-        dest: '<%= dirConfig.tmp %>/<%= dirConfig.client %>/scripts/utype.js'
+        dest: '<%= dirConfig.tmp %>'
         options:
           target: 'es5'
       server:

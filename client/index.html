@@ -1,117 +1,27 @@
 <!DOCTYPE html>
-<html ng-app="utype" ng-controller="MainController">
+<html>
 <head>
-  <meta charset="utf-8"/>
   <title>utype</title>
 
-  <!-- styles -->
-  <link rel="stylesheet" type="text/css" href="styles/reset.css"/>
-  <link rel="stylesheet" type="text/css" href="styles/index.css"/>
-
-  <!-- vendor libs -->
-  <script src="bower_components/underscore/underscore.js"></script>
-  <script src="bower_components/jquery/jquery.js"></script>
-  <script src="bower_components/angular-unstable/angular.js"></script>
-  <script src="scripts/typing.js"></script>
-
-  <!-- server -->
-  <script src="socket.io/socket.io.js"></script>
-
-  <!-- utype -->
-  <script src="scripts/lyric_sample.js"></script>
-  <script src="scripts/utype.js"></script>
+  <!-- build:css({.tmp,client}) style.css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+  <!-- endbuild -->
 </head>
-<body ng-keypress="onKeyPress">
+<body ng-app="utype">
 
 <div class="container">
-
-  <!-- body -->
-  <div class="body">
-
-    <!-- video player -->
-    <div class="video-player" style="text-align: center;">
-      <video src="videos/wonderful_rush.mp4" width="640" />
-    </div>
-    <!--
-    <audio src="musics/mondai_kaiketsu.mp3"></audio>
-    -->
-
-    <!-- progress bars -->
-    <div class="progress-bar-container">
-      <div class="progress-bar-title-column">
-        <ul>
-          <li>TOTAL</li>
-          <li>INTERVAL</li>
-        </ul>
-      </div>
-      <div class="progress-bar-column">
-        <div id="total-bar" class="progress">
-          <div class="bar" style="width: 0%;"></div>
-        </div>
-        <div id="interval-bar" class="progress">
-          <div class="bar" style="width: 0%"></div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- entry area -->
-    <div class="entry">
-
-      <h1 ng-show="game.isWatchStatus()">エントリー受付中!!</h1>
-
-      <div class="entry-form" ng-show="game.isWatchStatus()">
-        <span>アイコン:</span>
-        <select ng-model="entryForm.iconId">
-          <option value="0" selected="selected">折部やすな</option>
-          <option value="1">ソーニャ</option>
-          <option value="2">呉織あぎり</option>
-          <option value="3">没キャラ</option>
-        </select>
-        <input type="text" placeholder="名前" ng-model="entryForm.userName" />
-        <button ng-click="game.entryGame(entryForm)">エントリー</button>
-      </div>
-    </div>
-      
-    <!-- typing game lyric -->
-    <div class="lyric" ng-show="game.isPlayStatus()">
-      <div class="lyric-kana">
-        <span class="solved">{{ game.getTypingStatus().solvedKana }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedKana }}</span>
-      </div>
-      <div class="lyric-original">{{ game.getCurrentLyric().originalLyric }}</div>
-      <div class="lyric-roma">
-        <span class="solved">{{ game.getTypingStatus().solvedRoma }}</span><span class="unsolved">{{ game.getTypingStatus().unsolvedRoma }}</span>
-      </div>
-    </div>
-
-    <!-- entry client scores -->
-    <div class="entry-client"
-         ng-repeat="client in game.getEntryClients()"
-      >
-      <div class="client-info">
-        <img ng-src="img/icons/{{ client.info.iconId || 0 }}.png" class="client-icon" />
-        <div class="client-name">{{ client.info.userName }}</div>
-      </div>
-
-      <div class="client-score">
-        <ul>
-          <li>{{ game.getClientScore(client).totalScore.point || 0 | number }} Pt</li>
-          <li>{{ game.getClientScore(client).totalScore.missCount || 0 | number }} Miss</li>
-          <li>{{ game.getClientScore(client).totalScore.wpm || 0 | number }} WPM</li>
-        </ul>
-      </div>
-
-      <div class="client-lyric">
-        <div class="lyric-kana">
-          <span class="solved">{{ game.getClientSolvedKana(client) }}</span><span class="unsolved">{{ game.getClientUnsolvedKana(client) }}</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- footer -->
-  <div class="footer"></div>
+  <header>utype</header>
+  <div ng-include="'scripts/views/index.html'"></div>
+  <footer></footer>
 </div>
+
+<!-- build:js({.tmp,client}) script.js -->
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/underscore/underscore.js"></script>
+<script src="scripts/controllers/lobby.js"></script>
+<script src="scripts/main.js"></script>
+<!-- endbuild -->
 
 </body>
 </html>
