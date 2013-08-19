@@ -4,14 +4,14 @@
   <title>utype</title>
 
   <!-- build:css({.tmp,client}) style.css -->
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+	<link rel="stylesheet" href="styles/main.css"/>
   <!-- endbuild -->
 </head>
 <body ng-app="utype">
 
-<div class="container">
-  <header>utype</header>
-  <div ng-include="'scripts/views/index.html'"></div>
+<div class="container" ng-controller="MainController">
+  <header></header>
+  <div ng-include="'scripts/views/main.html'"></div>
   <footer></footer>
 </div>
 
@@ -19,7 +19,13 @@
 <script src="bower_components/angular/angular.js"></script>
 <script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/underscore/underscore.js"></script>
-<script src="scripts/controllers/lobby.js"></script>
+<script src="bower_components/jquery/jquery.js"></script>
+<script src="scripts/utype/tm_xml_parser.js"></script>
+<script src="scripts/utype/progress_view.js"></script>
+<script src="scripts/utype/timer.js"></script>
+<script src="scripts/utype/event.js"></script>
+<script src="scripts/utype/lyric_switcher.js"></script>
+<script src="scripts/controllers/main.js"></script>
 <script src="scripts/main.js"></script>
 <!-- endbuild -->
 

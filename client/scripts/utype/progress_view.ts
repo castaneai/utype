@@ -20,7 +20,7 @@ module utype {
 
 		constructor(progressElementSelector: string) {
 			var progressElement = jQuery(progressElementSelector);
-            this._barElement = progressElement.find('.bar');
+            this._barElement = progressElement.find('.progress-bar');
         }
 
         public startAnimation(percentage: number, duration: number): void {
