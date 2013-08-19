@@ -32,10 +32,12 @@ module utype {
         }
 
         public stopAnimation(): void {
+	        this._barElement.clearQueue();
             this._barElement.stop();
         }
 
         public setPercentage(percentage: number): void {
+	        this.stopAnimation();
             this.startAnimation(percentage, 0);
         }
     }
