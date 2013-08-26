@@ -27,6 +27,7 @@ li {
  */
 .container {
 	width: 1024px;
+    margin: 8px auto;
 }
 
 /**
@@ -88,7 +89,7 @@ li {
 }
 
 .progress .progress-bar {
-	width: 30%;
+	width: 0%;
 	height: 100%;
 	background: #fa362a;
 }
