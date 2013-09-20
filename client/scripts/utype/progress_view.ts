@@ -23,6 +23,11 @@ module utype {
             this._barElement = progressElement.find('.progress-bar');
         }
 
+	    public progress(duration: number): void {
+		    this.setPercentage(0);
+		    this.startAnimation(100, duration);
+	    }
+
         public startAnimation(percentage: number, duration: number): void {
             var options = {
                 duration: duration,

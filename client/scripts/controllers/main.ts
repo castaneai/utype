@@ -2,7 +2,7 @@
 /// <reference path="../utype/tm_xml_parser.ts" />
 /// <reference path="../utype/lyric_switcher.ts" />
 /// <reference path="../utype/progress_view.ts" />
-
+/// <reference path="../utype/typing_logic.ts" />
 
 module controllers {
 
@@ -11,64 +11,145 @@ module controllers {
 		title: string;
 	}
 
-	export interface PlayerScore {
-		point: number;
-		missCount: number;
-		wpm: number;
-	}
-
-	export interface Player {
-		icon: string;
-		name: string;
-		score: PlayerScore;
-	}
-
 	export interface MainScope extends ng.IScope {
 		musics: Music[];
 		selectedMusic: Music;
 		lyric: utype.Lyric;
-		entry: () => void;
-		players: Player[];
+
+		onKeyPress: (event) => void;
+	}
+
+	enum GameStatus {
+		ENTRY,
+		PLAY
 	}
 
 	export class MainController {
 
+		private _status: GameStatus = GameStatus.ENTRY;
+
+		private _scope: MainScope;
+
+		private _typing: utype.TypingLogic = new utype.TypingLogic();
+
+        private _totalProgressBar;
+
+        private _intervalProgressBar;
+
 		constructor($scope: MainScope) {
-			var defaultScore = {
-				point: 0,
-				missCount: 0,
-				wpm: 0
-			};
+			this._scope = $scope;
 			$scope.musics = [
 				{id:'wonderful_rush', title:'Wonderful Rush'}
 			];
 			$scope.selectedMusic = $scope.musics[0];
 
-			$scope.players = [
-				{icon: '4.jpg', name:'アリス', score: defaultScore},
-				{icon: '5.jpg', name:'あやや', score: defaultScore}
-			];
-
-			$scope.entry = () => {
-				var xmlPath = 'xml/' + $scope.selectedMusic.id + '.xml';
-				utype.TmXmlParser.parse(xmlPath, (lyrics: utype.Lyric[]) => {
-					var switcher = new utype.LyricSwitcher(lyrics);
-					var totalProgress = new utype.ProgressView('#total-progress')
-					var intervalProgress = new utype.ProgressView('#interval-progress');
-					this._playVideo('#video');
-					totalProgress.setPercentage(0);
-					totalProgress.startAnimation(100, switcher.getTotalDuration());
-					switcher.onSwitch.addListener((lyric: utype.Lyric) => {
-						intervalProgress.setPercentage(0);
-						intervalProgress.startAnimation(100, lyric.duration);
-						$scope.lyric = lyric;
-						$scope.$apply();
-					});
-					switcher.start();
-				});
+			$scope.onKeyPress = (event) => {
+                this._onKeyPress(event.which);
 			}
 		}
 
+        /**
+         * キーが押されたとき
+         * @param keyCode
+         * @private
+         */
+        private _onKeyPress(keyCode: number): void {
+            if (keyCode == 0x20 && this._status === GameStatus.ENTRY) {
+                this._startGame(this._scope.selectedMusic);
+            }
+            else if (this._status === GameStatus.PLAY) {
+                this._typeKey(keyCode);
+            }
+        }
+
+        /**
+         * キータイプをゲームに送信する
+         * @param keyCode
+         * @private
+         */
+        private _typeKey(keyCode: number): void {
+            var typedChar = String.fromCharCode(keyCode);
+            var typingResult = this._typing.type(typedChar);
+            if (typingResult) {
+                this._onSuccessType();
+            }
+            else {
+                this._onMissType();
+            }
+        }
+
+        /**
+         * ゲームを開始する
+         * @param music
+         * @private
+         */
+		private _startGame(music: Music): void {
+            this._totalProgressBar = new utype.ProgressView('#total-progress');
+            this._intervalProgressBar = new utype.ProgressView('#interval-progress');
+			var xmlPath = 'xml/' + music.id + '.xml';
+			utype.TmXmlParser.parse(xmlPath, (lyric) => {
+                this._onLyricsLoad(lyric)
+            });
+		}
+
+        /**
+         * トータルのプログレスバーを開始する
+         * @param progressBarSelector
+         * @param duration
+         * @private
+         */
+        private _startTotalProgressBar(duration: number): void {
+            this._totalProgressBar.progress(duration);
+        }
+
+        /**
+         * 歌詞データの読み込みが完了したとき
+         * @private
+         */
+        private _onLyricsLoad(lyrics: utype.Lyric[]): void {
+            this._startSwitch(lyrics);
+            this._playVideo('#video');
+        }
+
+        /**
+         * 歌詞の切り替えを開始する
+         * @param lyrics
+         * @private
+         */
+        private _startSwitch(lyrics: utype.Lyric[]): void {
+            var switcher = new utype.LyricSwitcher(lyrics);
+            switcher.onSwitch.addListener((lyric) => {
+                this._onSwitch(lyric)
+            });
+            switcher.start();
+           this._startTotalProgressBar(switcher.getTotalDuration());
+        }
+
+        /**
+         * 歌詞が切り替わる度に呼び出される
+         * @param lyric
+         * @private
+         */
+        private _onSwitch(lyric: utype.Lyric): void {
+            this._intervalProgressBar.progress(lyric.duration);
+            this._scope.lyric = lyric;
+            this._scope.$apply();
+        }
+
+		private _onSuccessType(): void {
+			if (this._typing.isFinish()) {
+				// TODO: stop wpm calc
+			}
+            // TODO: score++
+		}
+
+		private _onMissType(): void {
+            // TODO: missCount++
+		}
+
+		/**
+		 * 動画を再生する
+		 */
 		private _playVideo(videoElementSelector: string): void {
 			var elem = <HTMLVideoElement> document.querySelector(videoElementSelector);
 			elem.play();

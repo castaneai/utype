@@ -27,6 +27,7 @@ li {
  */
 .container {
 	width: 1024px;
+    margin: 0 auto;
 }
 
 /**
@@ -64,6 +65,10 @@ li {
 	font-size: 18px;
 }
 
+.video-chrome .video-chrome-bottom .lyric {
+	line-height: 1.5;
+}
+
 .video-chrome .video-chrome-bottom .lyric .lyric-kana {
 	font-size: 12px;
 }
@@ -88,7 +93,7 @@ li {
 }
 
 .progress .progress-bar {
-	width: 30%;
+	width: 0%;
 	height: 100%;
 	background: #fa362a;
 }

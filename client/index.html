@@ -7,24 +7,25 @@
 	<link rel="stylesheet" href="styles/main.css"/>
   <!-- endbuild -->
 </head>
-<body ng-app="utype">
+<body ng-app="utype" ng-controller="MainController" ng-keypress="onKeyPress">
 
-<div class="container" ng-controller="MainController">
+<div class="container">
   <header></header>
   <div ng-include="'scripts/views/main.html'"></div>
   <footer></footer>
 </div>
 
 <!-- build:js({.tmp,client}) script.js -->
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/underscore/underscore.js"></script>
 <script src="bower_components/jquery/jquery.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="scripts/utype/event.js"></script>
+<script src="scripts/utype/timer.js"></script>
 <script src="scripts/utype/tm_xml_parser.js"></script>
 <script src="scripts/utype/progress_view.js"></script>
-<script src="scripts/utype/timer.js"></script>
-<script src="scripts/utype/event.js"></script>
 <script src="scripts/utype/lyric_switcher.js"></script>
+<script src="scripts/typing.js"></script>
+<script src="scripts/utype/typing_logic.js"></script>
 <script src="scripts/controllers/main.js"></script>
 <script src="scripts/main.js"></script>
 <!-- endbuild -->

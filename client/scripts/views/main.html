@@ -1,43 +1,18 @@
 <!-- left side -->
 <div class="pull-left">
 	<!-- video chrome -->
-	<div class="video-chrome" ng-click="entry()">
-		<!-- video player -->
-		<div class="video-player">
-			<video id="video" ng-src="videos/wonderful_rush.mp4"></video>
-		</div>
+	<div class="video-chrome">
+    <div ng-include="'scripts/views/chrome-playing.html'"></div>
+	</div>
 
-		<!-- top area -->
-		<div class="video-chrome-top">
-			<!-- total progress bar -->
-			<div id="total-progress" class="progress">
-				<div class="progress-bar"></div>
-			</div>
-			<!-- music title area -->
-			<div class="music-title">
-				Wonderful Rush 難易度: ★★★★★★★★☆☆
-			</div>
-		</div>
+	<!-- chat area -->
+	<div class="chat">
 
-		<!-- bottom area -->
-		<div class="video-chrome-bottom">
-			<!-- interval progress bar -->
-			<div id="interval-progress" class="progress">
-				<div class="progress-bar"></div>
-			</div>
-			<!-- original lyric area -->
-			<div class="lyric">
-				<ul>
-					<li class="lyric-kana">&nbsp;{{ lyric.kanaLyric }}</li>
-					<li class="lyric-original">&nbsp;{{ lyric.originalLyric }}</li>
-				</ul>
-			</div>
-		</div>
 	</div>
 </div><!--
 
 right side bar
---><iv class="pull-left">
+--><div class="pull-left">
 	<!-- player list -->
 	<div class="player-list">
 		<p class="player-list-title">PLAYERS</p>
