@@ -8,7 +8,7 @@
   ],
   "dependencies": {
     "underscore": "~1.5.1",
-    "angular": "1.2.0rc1",
-    "jquery": "~2.0.3"
+    "jquery": "~2.0.3",
+    "angular": "master"
   }
 }
