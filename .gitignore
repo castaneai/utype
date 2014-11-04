@@ -1,5 +1,5 @@
 .tmp/
 node_modules/
-client/bower_components/
 .DS_Store
 .idea/
+public/lib/

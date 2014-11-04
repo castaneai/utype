@@ -3,9 +3,6 @@
   "version": "0.0.0",
   "description": "歌詞をタイピングするゲーム",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,24 +16,8 @@
     "url": "https://github.com/castaneai/utype/issues"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-watch": "~0.5.1",
-    "grunt-express": "~1.0.0-beta2",
-    "matchdep": "~0.1.2",
-    "grunt-typescript": "~0.2.2",
     "express": "~3.3.4",
     "socket.io": "~0.9.16",
-    "grunt-open": "~0.2.1",
-    "lodash": "~1.3.1",
-    "karma-script-launcher": "~0.1.0",
-    "karma-firefox-launcher": "~0.1.0",
-    "karma-chrome-launcher": "~0.1.0",
-    "karma-html2js-preprocessor": "~0.1.0",
-    "karma-requirejs": "~0.1.0",
-    "karma-jasmine": "~0.1.0",
-    "karma-coffee-preprocessor": "~0.1.0",
-    "karma-phantomjs-launcher": "~0.1.0",
-    "karma": "~0.10.1",
-    "grunt-karma": "~0.6.1"
+    "lodash": "~1.3.1"
   }
 }

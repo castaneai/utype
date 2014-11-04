@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html ng-app="uType">
+<head lang="ja">
+    <meta charset="UTF-8">
+    <title>utype</title>
+    <style>
+        .solved {
+            color: red;
+        }
+    </style>
+</head>
+<body ng-controller="MainController" ng-keypress="onKeyPress($event)">
+    <typing-game></typing-game>
+
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="scripts/typing.js"></script>
+    <script src="scripts/controllers/utype.js"></script>
+    <script src="scripts/directives/typing-game.js"></script>
+    <script src="scripts/services/karaoke.js"></script>
+</body>
+</html>

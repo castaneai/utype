@@ -1,14 +1,25 @@
 {
   "name": "utype",
   "version": "0.0.0",
+  "homepage": "https://github.com/castaneai/utype",
+  "authors": [
+    "castaneai <castaneai@castaneai.net>"
+  ],
+  "description": "Typing game online.",
+  "main": "app.js",
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
-    "components"
+    "bower_components",
+    "public/lib",
+    "test",
+    "tests"
   ],
   "dependencies": {
-    "underscore": "~1.5.1",
-    "jquery": "~2.0.3",
-    "angular": "master"
+    "angular": "~1.3.1"
   }
 }

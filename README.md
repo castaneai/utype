@@ -1,43 +1,57 @@
-UType
-=======
+utype
+======
+Online Music Typing Game
 
-歌詞をタイピングするゲーム.
-
-必要なもの
+Requirement
 ==============
 - [node.js] (http://nodejs.org/)
 
-アプリの実行
-==============
-1. 作業自動化ツールgrunt, パッケージ管理ツールbowerを入れる
-```
-$ npm install -g grunt-cli bower
+Install
+---------
+1. パッケージ管理ツールbowerを入れる
+```sh
+$ npm install -g bower
 ```
 
-2. 必要なライブラリを自動インストール
-```
+2. 必要なライブラリをインストール
+```sh
 $ npm install
 $ bower install
 ```
 
 3. サーバーを立てる
-```
-$ grunt server
+```sh
+$ node app.js
 ```
 
 4. ブラウザで以下のURLにアクセスすると実行できる
-```
-http://localhost:666
-```
 
-テストの実行
-=============
-1. テスト実行ツールkarmaを入れる
-```
-$ npm install -g karma
-```
+[http://localhost:3000](http://localhost:3000)
 
-2. karmaを起動。
-```
-$ karma start
-```
+Licence
+--------
+The MIT License (MIT)
+
+Copyright (c) 2014 castaneai
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Author
+---------
+[castaneai](https://github.com/castaneai)
