@@ -7,12 +7,26 @@
         .solved {
             color: red;
         }
+        .progress {
+            width: 100%;
+            height: 20px;
+            border: 1px solid black;
+        }
+        .progress-bar {
+            background: black;
+            width: 0;
+            height: 100%;
+        }
     </style>
 </head>
 <body ng-controller="MainController" ng-keypress="onKeyPress($event)">
+    <div class="progress">
+        <div class="progress-bar"></div>
+    </div>
     <typing-game></typing-game>
 
     <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/jquery/dist/jquery.min.js"></script>
     <script src="scripts/typing.js"></script>
     <script src="scripts/controllers/utype.js"></script>
     <script src="scripts/directives/typing-game.js"></script>

@@ -23,9 +23,23 @@ utype.controller('MainController', ['$scope', 'Karaoke', function($scope, Karaok
             $scope.applyWords();
         }
     };
+
     // ここからメインコード開始
+    var startProgress = function(duration) {
+        var options = {
+            duration: duration,
+            easing: 'linear'
+        };
+        jQuery('.progress-bar')
+            .css({width: 0})
+            .clearQueue()
+            .stop()
+            .animate({width: '100%'}, options);
+    };
+
     var typing = new Typing();
     Karaoke.on('switch', function(lyric) {
+        startProgress(lyric.duration);
         typing.register(lyric.kana);
         $scope.lyric = lyric.original;
         $scope.applyWords();
