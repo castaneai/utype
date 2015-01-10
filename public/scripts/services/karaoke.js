@@ -1,7 +1,7 @@
 /**
  * 一定時間ごとに歌詞を切り替える
  * 歌詞が切り替わるとswitchイベントまたはendイベントが起こる
- * コンストラクタに {original: string, kana: string, duration: number}の配列を渡す
+ * startに {original: string, kana: string, duration: number}の配列を渡す
  */
 utype.service('Karaoke', ['$timeout', function($timeout) {
     var _lyrics = [];

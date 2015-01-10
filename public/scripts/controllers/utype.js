@@ -32,7 +32,7 @@ utype.controller('MainController', ['$scope', 'Karaoke', function($scope, Karaok
         };
         jQuery('.progress-bar')
             .css({width: 0})
-            .clearQueue()
+            .clearQueue() // clearQueueをしないと少しずつタイミングがずれてくるので...
             .stop()
             .animate({width: '100%'}, options);
     };
