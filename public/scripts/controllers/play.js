@@ -1,4 +1,3 @@
-var utype = angular.module('uType', []);
 utype.controller('MainController', ['$scope', 'Karaoke', function($scope, Karaoke) {
     // viewに表示する変数たち
     $scope.score = 0;

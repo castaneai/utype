@@ -1,34 +1,25 @@
 <!DOCTYPE html>
-<html ng-app="uType">
-<head lang="ja">
+<html ng-app="utype">
+<head>
     <meta charset="UTF-8">
     <title>utype</title>
-    <style>
-        .solved {
-            color: red;
-        }
-        .progress {
-            width: 100%;
-            height: 20px;
-            border: 1px solid black;
-        }
-        .progress-bar {
-            background: black;
-            width: 0;
-            height: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="styles/main.css"/>
 </head>
-<body ng-controller="MainController" ng-keypress="onKeyPress($event)">
-    <div class="progress">
-        <div class="progress-bar"></div>
-    </div>
-    <typing-game></typing-game>
 
-    <script src="lib/angular/angular.min.js"></script>
-    <script src="lib/jquery/dist/jquery.min.js"></script>
-    <script src="scripts/typing.js"></script>
-    <script src="scripts/controllers/utype.js"></script>
+<body ng-keypress="onKeyPress($event)">
+
+    <ng-view>
+
+    <script src="scripts/lib/jquery-2.1.3.min.js"></script>
+    <script src="scripts/lib/angular.min.js"></script>
+    <script src="scripts/lib/angular-route.min.js"></script>
+    <script src="scripts/lib/socket.min.js"></script>
+    <script src="scripts/lib/typing.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="scripts/main.js"></script>
+    <script src="scripts/controllers/login.js"></script>
+    <script src="scripts/controllers/play.js"></script>
     <script src="scripts/directives/typing-game.js"></script>
     <script src="scripts/services/karaoke.js"></script>
 </body>
