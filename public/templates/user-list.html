@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
+<ul class="user-list">
+    <li ng-repeat="user in users">
+        <p>{{ user.name }}</p>
+        <div class="typing-game-words-kana" ng-show="state == 'playing'">
+            <span class="solved">{{ users.words.kana.solved }}</span><!--
+        --><span class="unsolved">{{ users.words.kana.unsolved }}</span>
+        </div>
+    </li>
+</ul>

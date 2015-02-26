@@ -12,7 +12,7 @@ utype.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'templates/login.html',
             controller: 'LoginController'
         }).
-        when('/play/:musicId', {
+        when('/play', { // TODO: set :musicId
             templateUrl: 'templates/play.html',
             controller: 'PlayController'
         }).

@@ -1,4 +1,8 @@
-utype.controller('MainController', ['$scope', 'Karaoke', function($scope, Karaoke) {
+utype.controller('PlayController', ['$scope', 'Karaoke', 'socket', function($scope, Karaoke, socket) {
+    // 状態
+    // 'ready', 'playing', 'result' のどれか
+    $scope.state = 'ready';
+
     // viewに表示する変数たち
     $scope.score = 0;
     $scope.wpm = 0;
@@ -16,10 +20,20 @@ utype.controller('MainController', ['$scope', 'Karaoke', function($scope, Karaok
         };
     };
     $scope.onKeyPress = function(e) {
-        var typedChar = String.fromCharCode(e.which);
-        if (typing.getRemainedQuestion().length > 0) {
-            typing.answer(typedChar);
-            $scope.applyWords();
+        switch ($scope.state) {
+            case 'ready':
+                if (e.which == 0x20) {
+                    socket.emit('start');
+                }
+                break;
+
+            case 'playing':
+                var typedChar = String.fromCharCode(e.which);
+                if (typing.getRemainedQuestion().length > 0) {
+                    typing.answer(typedChar);
+                    $scope.applyWords();
+                }
+                break;
         }
     };
 
@@ -46,6 +60,7 @@ utype.controller('MainController', ['$scope', 'Karaoke', function($scope, Karaok
 
     // スタート！
     var lyrics = [
+        {original: '', kana: '', duration: 200},
         {original: '試験abc-~+*', kana: 'しけんabc-~+*', duration: 3000},
         {original: '--休憩タイム--', kana: '', duration: 3000},
         {original: '＠「」％＆', kana: '＠「」％＆', duration: 3000}
